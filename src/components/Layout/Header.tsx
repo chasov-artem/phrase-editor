@@ -1,33 +1,56 @@
-import { useEffect, useState } from 'react'
+import React from 'react'
+import { Github, Moon, Sun } from 'lucide-react'
 
-export default function Header() {
-  const [isDark, setIsDark] = useState(false)
+const Header: React.FC = () => {
+  const [isDarkMode, setIsDarkMode] = React.useState(false)
 
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDark)
-  }, [isDark])
+  React.useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [isDarkMode])
 
   return (
-    <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-lg shadow-sm dark:bg-slate-900/80">
-      <div className="container mx-auto flex items-center justify-between px-4 py-4">
-        <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
-            Phrase Editor
-          </p>
-          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
-            Редактор фраз
-          </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-300">
-            Сортуй, трансформуй та вимірюй списки фраз у реальному часі.
-          </p>
+    <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg" />
+            <div>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+                Phrase Editor
+              </h1>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Ukrainian text processing tool
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              title={isDarkMode ? 'Світла тема' : 'Темна тема'}
+            >
+              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+
+            <a
+              href="https://github.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              title="GitHub Repository"
+            >
+              <Github size={20} />
+            </a>
+          </div>
         </div>
-        <button
-          onClick={() => setIsDark((prev) => !prev)}
-          className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-100"
-        >
-          {isDark ? 'Світла тема' : 'Темна тема'}
-        </button>
       </div>
     </header>
   )
 }
+
+export default Header
