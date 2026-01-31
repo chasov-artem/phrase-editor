@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useStore } from '@store/useStore'
-import { searchAndReplace } from '@utils/textOperationsExtended'
 import type { OperationIdentifier } from '../../../types/operations'
 import {
   Search,
@@ -8,6 +7,7 @@ import {
   Regex,
   CaseSensitive,
 } from 'lucide-react'
+import { usePerformance } from '../../../providers/PerformanceProvider'
 
 export const SearchReplace: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -23,42 +23,56 @@ export const SearchReplace: React.FC = () => {
   const setLastOperationTimestamp = useStore(
     (state) => state.setLastOperationTimestamp,
   )
+  const setIsProcessing = useStore((state) => state.setIsProcessing)
   const isProcessing = useStore((state) => state.isProcessing)
+  const { worker } = usePerformance()
 
-  const handleReplace = () => {
+  const handleReplace = async () => {
+    if (isProcessing || worker.isBusy) return
     if (!searchTerm.trim()) return
 
     const textToProcess = processedText || rawText
     if (!textToProcess) return
 
-    const startTime = performance.now()
+    setIsProcessing(true)
+    try {
+      const startTime = performance.now()
 
-    const result = searchAndReplace(
-      textToProcess,
-      searchTerm,
-      replaceTerm,
-      useRegex,
-      caseSensitive,
-    )
+      const result = await worker.execute<string>(
+        'SEARCH_REPLACE',
+        {
+          text: textToProcess,
+          search: searchTerm,
+          replace: replaceTerm,
+          useRegex,
+          caseSensitive,
+        },
+        (progress, processed) => {
+          console.log(`Search & replace progress: ${progress}% (${processed} rows)`)
+        },
+      )
 
-    const executionTime = performance.now() - startTime
-
-    const operationTimestamp = Date.now()
-    setProcessedText(result)
-    setOperationMetrics({
-      operation: 'search_replace' as OperationIdentifier,
-      executionTime,
-      linesProcessed: textToProcess.split('\n').length,
-      linesChanged: result.split('\n').length,
-    })
-    addToHistory(result)
-    setLastOperationTimestamp(operationTimestamp)
+      const executionTime = performance.now() - startTime
+      setProcessedText(result)
+      setOperationMetrics({
+        operation: 'search_replace' as OperationIdentifier,
+        executionTime,
+        linesProcessed: textToProcess.split('\n').length,
+        linesChanged: result.split('\n').length,
+      })
+      addToHistory(result)
+      setLastOperationTimestamp(Date.now())
+    } catch (error) {
+      console.error('Search & Replace failed:', error)
+    } finally {
+      setIsProcessing(false)
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleReplace()
+      void handleReplace()
     }
   }
 
@@ -169,7 +183,9 @@ export const SearchReplace: React.FC = () => {
 
         <div className="pt-2">
           <button
-            onClick={handleReplace}
+            onClick={() => {
+              void handleReplace()
+            }}
             disabled={!searchTerm.trim() || isProcessing}
             className={`
               w-full py-3 px-4 rounded-lg font-medium

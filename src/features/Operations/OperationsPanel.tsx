@@ -5,11 +5,8 @@ import { operationsConfig } from '@utils/operationsConfig'
 import type { OperationConfig } from '../../types/operations'
 import { OperationGroup } from './components/OperationGroup'
 import { SearchReplace } from './components/SearchReplace'
-import {
-  applyOperationToText,
-  measureOperationExecution,
-} from '@utils/textOperationsExtended'
 import { Zap, Download, Upload } from 'lucide-react'
+import { usePerformance } from '../../providers/PerformanceProvider'
 
 export const OperationsPanel: React.FC = () => {
   const {
@@ -28,6 +25,7 @@ export const OperationsPanel: React.FC = () => {
     setRawText,
     setLastOperationTimestamp,
   } = useStore()
+  const { worker } = usePerformance()
 
   const groupedOperations = operationsConfig.reduce(
     (acc, operation) => {
@@ -40,19 +38,53 @@ export const OperationsPanel: React.FC = () => {
     {} as Record<string, OperationConfig[]>,
   )
 
-  const handleOperationClick = (operationId: OperationConfig['id']) => {
-    if (isProcessing) return
+  const logProgress = (progress: number, processed: number) => {
+    console.log(`Progress: ${progress}%, rows processed: ${processed}`)
+  }
+
+  const executeOperation = async (operationId: OperationConfig['id']) => {
+    if (isProcessing || worker.isBusy) return
 
     const textToProcess = processedText || rawText
     if (!textToProcess.trim()) return
 
     setIsProcessing(true)
-    const operationTimestamp = Date.now()
     try {
-      const { result, executionTime } = measureOperationExecution(() =>
-        applyOperationToText(textToProcess, operationId),
-      )
+      const startTime = performance.now()
+      let result = ''
 
+      switch (operationId) {
+        case 'sort_asc':
+          result = await worker.execute<string>(
+            'SORT',
+            { text: textToProcess, ascending: true, locale: 'uk-UA' },
+            logProgress,
+          )
+          break
+        case 'sort_desc':
+          result = await worker.execute<string>(
+            'SORT',
+            { text: textToProcess, ascending: false, locale: 'uk-UA' },
+            logProgress,
+          )
+          break
+        case 'remove_duplicates':
+          result = await worker.execute<string>(
+            'REMOVE_DUPLICATES',
+            { text: textToProcess },
+            logProgress,
+          )
+          break
+        default:
+          result = await worker.execute<string>(
+            'APPLY_OPERATION',
+            { text: textToProcess, operation: operationId },
+            logProgress,
+          )
+          break
+      }
+
+      const executionTime = performance.now() - startTime
       const linesProcessed = textToProcess.split(/\r?\n/).length
       const linesChanged = result.split(/\r?\n/).length
 
@@ -64,10 +96,16 @@ export const OperationsPanel: React.FC = () => {
         linesChanged,
       })
       addToHistory(result)
-      setLastOperationTimestamp(operationTimestamp)
+      setLastOperationTimestamp(Date.now())
+    } catch (error) {
+      console.error('Operation failed:', error)
     } finally {
       setIsProcessing(false)
     }
+  }
+
+  const handleOperationClick = (operationId: OperationConfig['id']) => {
+    executeOperation(operationId)
   }
 
   const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
@@ -151,7 +189,7 @@ export const OperationsPanel: React.FC = () => {
                 title={groupTitle}
                 operations={operations}
                 onOperationClick={handleOperationClick}
-                isProcessing={isProcessing}
+                isProcessing={isProcessing || worker.isBusy}
               />
             ))}
           </div>
@@ -208,6 +246,20 @@ export const OperationsPanel: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {worker.isBusy && (
+        <div className="fixed bottom-4 right-4 z-50 bg-blue-600 text-white px-4 py-3 rounded-lg shadow-2xl border border-blue-500">
+          <div className="flex items-center space-x-3">
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            <div>
+              <div className="text-sm font-medium">Обробка...</div>
+              <div className="text-xs opacity-75">
+                {worker.progress || 0}% • {worker.processedItems.toLocaleString()} рядків
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -17,4 +17,10 @@ export default defineConfig({
       '@types': resolve(__dirname, 'src/types'),
     },
   },
+  worker: {
+    format: 'es',
+  },
+  build: {
+    target: 'es2020',
+  },
 })

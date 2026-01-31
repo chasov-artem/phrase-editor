@@ -1,6 +1,6 @@
 import type { TextOperationType } from '../types/operations'
 
-const perLineOperations: TextOperationType[] = [
+export const perLineOperations: TextOperationType[] = [
   'uppercase',
   'lowercase',
   'title_case',

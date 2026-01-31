@@ -9,6 +9,8 @@ import {
   applyOperationToText,
   measureOperationExecution,
 } from '@utils/textOperationsExtended'
+import { saveState, loadState } from '@utils/localStorage'
+import { throttle } from '@utils/performance'
 
 export interface PhraseStore {
   rawText: string
@@ -21,12 +23,17 @@ export interface PhraseStore {
   history: string[]
   historyIndex: number
   lastOperationTimestamp: number
+  useVirtualization: boolean
+  autoSave: boolean
+  lastSaveTime: number | null
 
   setRawText: (text: string) => void
   setProcessedText: (text: string) => void
   setIsProcessing: (isProcessing: boolean) => void
   setOperationMetrics: (metrics: OperationMetrics | null) => void
   setLastOperationTimestamp: (timestamp: number) => void
+  setUseVirtualization: (use: boolean) => void
+  setAutoSave: (autoSave: boolean) => void
   clearAll: () => void
   copyToClipboard: () => Promise<void>
   applyOperation: (operation: TextOperationType) => void
@@ -37,6 +44,8 @@ export interface PhraseStore {
   redo: () => void
   canUndo: () => boolean
   canRedo: () => boolean
+  saveToStorage: () => void
+  loadFromStorage: () => void
 }
 
 const initialTextMetrics: TextMetrics = {
@@ -56,15 +65,29 @@ const useStore = create<PhraseStore>((set, get) => ({
   history: [''],
   historyIndex: 0,
   lastOperationTimestamp: 0,
+  useVirtualization: true,
+  autoSave: true,
+  lastSaveTime: null,
 
-  setRawText: (text) => {
+  setRawText: throttle((text: string) => {
     set({
       rawText: text,
       textMetrics: analyzeText(text),
     })
-  },
+    if (get().autoSave) {
+      get().saveToStorage()
+    }
+  }, 500),
 
-  setProcessedText: (text) => set({ processedText: text }),
+  setProcessedText: throttle((text: string) => {
+    set({
+      processedText: text,
+      lastOperationTimestamp: Date.now(),
+    })
+    if (get().autoSave) {
+      get().saveToStorage()
+    }
+  }, 500),
 
   setIsProcessing: (isProcessing) => set({ isProcessing }),
   setOperationMetrics: (metrics) => set({ operationMetrics: metrics }),
@@ -176,6 +199,40 @@ const useStore = create<PhraseStore>((set, get) => ({
   canRedo: () => {
     const { history, historyIndex } = get()
     return historyIndex < history.length - 1
+  },
+  setUseVirtualization: (useVirtualization) => set({ useVirtualization }),
+  setAutoSave: (autoSave) => set({ autoSave }),
+  saveToStorage: () => {
+    const state = {
+      rawText: get().rawText,
+      processedText: get().processedText,
+      history: get().history,
+      historyIndex: get().historyIndex,
+    }
+
+    if (saveState(state)) {
+      set({ lastSaveTime: Date.now() })
+    }
+  },
+  loadFromStorage: () => {
+    const saved = loadState()
+    if (!saved) {
+      return
+    }
+
+    const history = saved.history && saved.history.length > 0 ? saved.history : ['']
+    const historyIndex = Math.max(
+      0,
+      Math.min(saved.historyIndex ?? 0, history.length - 1),
+    )
+
+    set({
+      rawText: saved.rawText || '',
+      processedText: saved.processedText || '',
+      history,
+      historyIndex,
+      lastSaveTime: saved.timestamp || null,
+    })
   },
 }))
 
