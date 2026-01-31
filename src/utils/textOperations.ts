@@ -1,4 +1,4 @@
-import type { TextOperationType } from '@types/operations'
+import type { TextOperationType } from '../types/operations'
 
 export interface LineStats {
   total: number

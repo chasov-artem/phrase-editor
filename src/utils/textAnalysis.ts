@@ -1,4 +1,4 @@
-import type { TextMetrics } from '@types/operations'
+import type { TextMetrics } from '../types/operations'
 
 export function analyzeText(text: string): TextMetrics {
   const lines = text.split('\n')

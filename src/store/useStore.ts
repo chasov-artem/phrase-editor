@@ -3,9 +3,12 @@ import type {
   TextOperationType,
   OperationMetrics,
   TextMetrics,
-} from '@types/operations'
+} from '../types/operations'
 import { analyzeText } from '@utils/textAnalysis'
-import { applyTextOperation, measureOperation } from '@utils/textOperations'
+import {
+  applyOperationToText,
+  measureOperationExecution,
+} from '@utils/textOperationsExtended'
 
 export interface PhraseStore {
   rawText: string
@@ -17,15 +20,19 @@ export interface PhraseStore {
 
   history: string[]
   historyIndex: number
+  lastOperationTimestamp: number
 
   setRawText: (text: string) => void
   setProcessedText: (text: string) => void
   setIsProcessing: (isProcessing: boolean) => void
+  setOperationMetrics: (metrics: OperationMetrics | null) => void
+  setLastOperationTimestamp: (timestamp: number) => void
   clearAll: () => void
   copyToClipboard: () => Promise<void>
   applyOperation: (operation: TextOperationType) => void
   updateTextMetrics: () => void
   addToHistory: (text: string) => void
+  resetHistory: (text: string) => void
   undo: () => void
   redo: () => void
   canUndo: () => boolean
@@ -48,6 +55,7 @@ const useStore = create<PhraseStore>((set, get) => ({
   operationMetrics: null,
   history: [''],
   historyIndex: 0,
+  lastOperationTimestamp: 0,
 
   setRawText: (text) => {
     set({
@@ -59,6 +67,9 @@ const useStore = create<PhraseStore>((set, get) => ({
   setProcessedText: (text) => set({ processedText: text }),
 
   setIsProcessing: (isProcessing) => set({ isProcessing }),
+  setOperationMetrics: (metrics) => set({ operationMetrics: metrics }),
+  setLastOperationTimestamp: (timestamp) =>
+    set({ lastOperationTimestamp: timestamp }),
 
   clearAll: () =>
     set({
@@ -69,6 +80,7 @@ const useStore = create<PhraseStore>((set, get) => ({
       operationMetrics: null,
       history: [''],
       historyIndex: 0,
+      lastOperationTimestamp: 0,
     }),
 
   copyToClipboard: async () => {
@@ -93,10 +105,14 @@ const useStore = create<PhraseStore>((set, get) => ({
     const { rawText, processedText } = get()
     const textToProcess = processedText || rawText
 
+    if (!textToProcess.trim()) {
+      return
+    }
+
     set({ isProcessing: true })
 
-    const { result, executionTime } = measureOperation(() =>
-      applyTextOperation(textToProcess, operation),
+    const { result, executionTime } = measureOperationExecution(() =>
+      applyOperationToText(textToProcess, operation),
     )
 
     const linesProcessed = textToProcess.split(/\r?\n/).length
@@ -114,6 +130,7 @@ const useStore = create<PhraseStore>((set, get) => ({
     })
 
     get().addToHistory(result)
+    get().setLastOperationTimestamp(Date.now())
   },
 
   addToHistory: (text) => {
@@ -124,6 +141,13 @@ const useStore = create<PhraseStore>((set, get) => ({
       historyIndex: newHistory.length - 1,
     })
   },
+
+  resetHistory: (text) =>
+    set({
+      history: [text],
+      historyIndex: 0,
+      lastOperationTimestamp: 0,
+    }),
 
   undo: () => {
     const { history, historyIndex } = get()

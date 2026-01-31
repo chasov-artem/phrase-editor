@@ -1,8 +1,23 @@
 import Header from './components/Layout/Header'
 import TextEditor from './features/TextEditor/TextEditor'
 import Metrics from './features/Metrics/Metrics'
+import OperationsPanel from './features/Operations/OperationsPanel'
+import { useStore } from '@store/useStore'
 
 export default function App() {
+  const {
+    history,
+    historyIndex,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+    isProcessing,
+  } = useStore()
+
+  const undoSteps = historyIndex
+  const redoSteps = history.length - historyIndex - 1
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       <Header />
@@ -10,43 +25,17 @@ export default function App() {
       <main className="container mx-auto px-4 py-8 max-w-7xl space-y-10">
         <section className="text-center">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Редактор списку фраз
+            Phrase List Editor
           </h1>
           <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Обробляйте до 10 000 рядків з підтримкою української мови та Unicode
+            Process up to 10,000 rows with full Unicode and Latin support
           </p>
         </section>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             <TextEditor />
-
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
-                Доступні операції
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  'Усі великі',
-                  'Усі малі',
-                  'Перше слово з великої',
-                  'Додати +',
-                  'Видалити +',
-                  'Додати лапки',
-                  'Обрізати пробіли',
-                ].map((op) => (
-                  <span
-                    key={op}
-                    className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm"
-                  >
-                    {op}
-                  </span>
-                ))}
-              </div>
-              <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-                Повна панель операцій буде додана наступним кроком
-              </p>
-            </div>
+            <OperationsPanel />
           </div>
 
           <div className="space-y-8">
@@ -54,23 +43,39 @@ export default function App() {
 
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 space-y-4">
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                Історія дій
+                Action History
               </h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-                  <span>Доступні кроки:</span>
-                  <span className="font-mono">0</span>
+                  <span>Undo steps:</span>
+                  <span className="font-mono">{undoSteps}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+                  <span>Redo steps:</span>
+                  <span className="font-mono">{redoSteps}</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <button
-                    disabled
-                    className="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-400 cursor-not-allowed"
+                    onClick={undo}
+                    disabled={!canUndo() || isProcessing}
+                    className={`
+                      px-4 py-2 rounded-lg font-medium transition-colors
+                      ${!canUndo() || isProcessing
+                        ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}
+                    `}
                   >
                     ← Undo
                   </button>
                   <button
-                    disabled
-                    className="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-400 cursor-not-allowed"
+                    onClick={redo}
+                    disabled={!canRedo() || isProcessing}
+                    className={`
+                      px-4 py-2 rounded-lg font-medium transition-colors
+                      ${!canRedo() || isProcessing
+                        ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}
+                    `}
                   >
                     Redo →
                   </button>
@@ -86,23 +91,23 @@ export default function App() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
             <div>
               <h4 className="font-medium text-gray-800 dark:text-white mb-2">
-                Про інструмент
+                About
               </h4>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Веб-інструмент для редагування списків фраз з підтримкою української мови
+                Web tool for editing phrase lists with multilingual support
               </p>
             </div>
             <div>
               <h4 className="font-medium text-gray-800 dark:text-white mb-2">
-                Можливості
+                Features
               </h4>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                До 10 000 рядків • Unicode • Текстові трансформації • Undo/Redo
+                Up to 10,000 lines • Unicode • Text transformations • Undo/Redo
               </p>
             </div>
             <div>
               <h4 className="font-medium text-gray-800 dark:text-white mb-2">
-                Технології
+                Tech stack
               </h4>
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 React • TypeScript • Tailwind CSS • Zustand
@@ -110,7 +115,7 @@ export default function App() {
             </div>
           </div>
           <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-800 text-center text-sm text-gray-500 dark:text-gray-400">
-            <p>© 2026 Редактор фраз • Підтримка української локалізації</p>
+            <p>© 2026 Phrase Editor • Multilingual ready</p>
           </div>
         </div>
       </footer>

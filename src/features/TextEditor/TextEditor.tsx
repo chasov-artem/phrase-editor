@@ -19,8 +19,8 @@ export const TextEditor: React.FC = () => {
     isResultVisible && processedText ? processedText : rawText
 
   const displayPlaceholder = isResultVisible
-    ? 'Результат буде відображено тут після виконання операцій...'
-    : 'Вставте фрази, кожна з нового рядка...\nНаприклад:\nсок ЦІНА\nтелефон Samsung\nкнига програмування'
+    ? 'Results appear here after applying operations...'
+    : 'Paste phrases, one per line...\nFor example:\norange juice\nSamsung Galaxy\nprogramming book'
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
@@ -28,22 +28,22 @@ export const TextEditor: React.FC = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-              {isResultVisible ? 'Результат обробки' : 'Вхідний текст'}
+              {isResultVisible ? 'Processed output' : 'Input text'}
             </h2>
             <button
               onClick={toggleResultView}
               className="flex items-center space-x-2 px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
-              title={isResultVisible ? 'Показати вхідний текст' : 'Показати результат'}
+              title={isResultVisible ? 'Show input text' : 'Show processed output'}
             >
               {isResultVisible ? (
                 <>
                   <EyeOff size={16} />
-                  <span>Вхідний текст</span>
+                  <span>Input text</span>
                 </>
               ) : (
                 <>
                   <Eye size={16} />
-                  <span>Результат</span>
+                  <span>Processed output</span>
                 </>
               )}
             </button>
@@ -55,7 +55,7 @@ export const TextEditor: React.FC = () => {
               className="flex items-center space-x-2 px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/50 rounded-lg transition-colors"
             >
               <Trash2 size={18} />
-              <span>Очистити</span>
+              <span>Clear</span>
             </button>
 
             <button
@@ -63,7 +63,7 @@ export const TextEditor: React.FC = () => {
               className="flex items-center space-x-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/50 rounded-lg transition-colors"
             >
               <Copy size={18} />
-              <span>Копіювати</span>
+              <span>Copy</span>
             </button>
           </div>
         </div>
@@ -77,16 +77,16 @@ export const TextEditor: React.FC = () => {
             autoFocus={!isResultVisible}
           />
 
-          <div className="absolute bottom-3 right-3 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs rounded">
-            {getLineCount(displayText)} рядків
+            <div className="absolute bottom-3 right-3 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs rounded">
+            {getLineCount(displayText)} rows
           </div>
         </div>
 
         {isResultVisible && (
           <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg text-sm text-yellow-800 dark:text-yellow-200">
-            <p className="font-medium">Режим перегляду результату</p>
+            <p className="font-medium">Result preview mode</p>
             <p className="text-xs opacity-75 mt-1">
-              Текст доступний тільки для читання. Для редагування перейдіть у режим "Вхідний текст"
+              Text is read-only. Switch back to "Input text" to edit.
             </p>
           </div>
         )}

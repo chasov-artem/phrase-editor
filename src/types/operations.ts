@@ -8,8 +8,11 @@ export type TextOperationType =
   | 'add_quotes'
   | 'add_brackets'
   | 'add_dash_prefix'
+  | 'add_dash_brackets_prefix'
+  | 'add_dash_quotes_prefix'
   | 'trim_spaces'
   | 'remove_tabs'
+  | 'remove_after_dash'
   | 'replace_spaces_with_underscore'
   | 'remove_special_chars'
   | 'replace_special_chars_with_spaces'
@@ -18,8 +21,10 @@ export type TextOperationType =
   | 'remove_duplicates'
   | 'remove_empty_lines'
 
+export type OperationIdentifier = TextOperationType | 'search_replace'
+
 export interface OperationMetrics {
-  operation: TextOperationType
+  operation: OperationIdentifier
   executionTime: number
   linesProcessed: number
   linesChanged: number
@@ -31,4 +36,17 @@ export interface TextMetrics {
   emptyLines: number
   totalCharacters: number
   wordCount: number
+}
+
+export interface OperationConfig {
+  id: TextOperationType
+  title: string
+  description: string
+  group:
+    | 'Case'
+    | 'Symbols/Wrapping'
+    | 'Cleanup'
+    | 'Sorting & Uniqueness'
+  icon?: string
+  hotkey?: string
 }

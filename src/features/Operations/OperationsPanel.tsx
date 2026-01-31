@@ -1,35 +1,215 @@
-import useStore from '@store/useStore'
-import { SUPPORTED_OPERATIONS } from '@utils/constants'
+import React from 'react'
+import type { ChangeEvent } from 'react'
+import { useStore } from '@store/useStore'
+import { operationsConfig } from '@utils/operationsConfig'
+import type { OperationConfig } from '../../types/operations'
+import { OperationGroup } from './components/OperationGroup'
+import { SearchReplace } from './components/SearchReplace'
+import {
+  applyOperationToText,
+  measureOperationExecution,
+} from '@utils/textOperationsExtended'
+import { Zap, Download, Upload } from 'lucide-react'
 
-export default function OperationsPanel() {
-  const { currentOperation, addOperation } = useStore()
+export const OperationsPanel: React.FC = () => {
+  const {
+    rawText,
+    processedText,
+    isProcessing,
+    setProcessedText,
+    setOperationMetrics,
+    setIsProcessing,
+    addToHistory,
+    resetHistory,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+    setRawText,
+    setLastOperationTimestamp,
+  } = useStore()
+
+  const groupedOperations = operationsConfig.reduce(
+    (acc, operation) => {
+      if (!acc[operation.group]) {
+        acc[operation.group] = []
+      }
+      acc[operation.group].push(operation)
+      return acc
+    },
+    {} as Record<string, OperationConfig[]>,
+  )
+
+  const handleOperationClick = (operationId: OperationConfig['id']) => {
+    if (isProcessing) return
+
+    const textToProcess = processedText || rawText
+    if (!textToProcess.trim()) return
+
+    setIsProcessing(true)
+    const operationTimestamp = Date.now()
+    try {
+      const { result, executionTime } = measureOperationExecution(() =>
+        applyOperationToText(textToProcess, operationId),
+      )
+
+      const linesProcessed = textToProcess.split(/\r?\n/).length
+      const linesChanged = result.split(/\r?\n/).length
+
+      setProcessedText(result)
+      setOperationMetrics({
+        operation: operationId,
+        executionTime,
+        linesProcessed,
+        linesChanged,
+      })
+      addToHistory(result)
+      setLastOperationTimestamp(operationTimestamp)
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const content = (e.target?.result as string) || ''
+      setRawText(content)
+      setProcessedText('')
+      setOperationMetrics(null)
+      resetHistory(content)
+    }
+    reader.readAsText(file)
+  }
+
+  const handleExport = () => {
+    const textToExport = processedText || rawText
+    if (!textToExport) return
+
+    const blob = new Blob([textToExport], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'phrases.txt'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
 
   return (
-    <section className="space-y-4 rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm dark:border-slate-800/60 dark:bg-slate-900/80">
-      <div>
-        <p className="text-xs uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">
-          Операції
-        </p>
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-          Панель дій
-        </h2>
+    <div className="space-y-8">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                <Zap className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
+                  Processing Operations
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {operationsConfig.length} transformations available
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={undo}
+                disabled={!canUndo() || isProcessing}
+                className={`
+                  px-4 py-2 rounded-lg font-medium transition-colors
+                  ${!canUndo() || isProcessing
+                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}
+                `}
+              >
+                ← Undo
+              </button>
+              <button
+                onClick={redo}
+                disabled={!canRedo() || isProcessing}
+                className={`
+                  px-4 py-2 rounded-lg font-medium transition-colors
+                  ${!canRedo() || isProcessing
+                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}
+                `}
+              >
+                Redo →
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            {Object.entries(groupedOperations).map(([groupTitle, operations]) => (
+              <OperationGroup
+                key={groupTitle}
+                title={groupTitle}
+                operations={operations}
+                onOperationClick={handleOperationClick}
+                isProcessing={isProcessing}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <SearchReplace />
+
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+                Files
+              </h3>
+
+              <div className="space-y-4">
+                <div>
+                  <label
+                    className="flex items-center justify-center space-x-3
+                      px-4 py-3 bg-gray-50 dark:bg-gray-900
+                      border-2 border-dashed border-gray-300 dark:border-gray-600
+                      rounded-lg cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 transition-colors"
+                  >
+                    <Upload className="w-5 h-5" />
+                    <span className="font-medium">Upload a .txt file</span>
+                    <input
+                      type="file"
+                      accept=".txt"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                      disabled={isProcessing}
+                    />
+                  </label>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
+                    Files up to 10MB supported
+                  </p>
+                </div>
+
+                <button
+                  onClick={handleExport}
+                  disabled={!rawText || isProcessing}
+                  className={`
+                    w-full flex items-center justify-center space-x-3
+                    px-4 py-3 rounded-lg font-medium transition-colors
+                    ${!rawText || isProcessing
+                      ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                      : 'bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white shadow-md hover:shadow-lg'}
+                  `}
+                >
+                  <Download className="w-5 h-5" />
+                  <span>Export as .txt</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        {SUPPORTED_OPERATIONS.map((operation) => (
-          <button
-            key={operation}
-            onClick={() => addOperation(operation)}
-            className="rounded-2xl border border-slate-200/70 px-4 py-3 text-left text-sm font-medium text-slate-700 transition hover:border-accent hover:text-slate-900 dark:border-slate-800/60 dark:text-slate-200 dark:hover:border-accent dark:hover:text-white"
-          >
-            {operation}
-          </button>
-        ))}
-      </div>
-      {currentOperation && (
-        <p className="text-sm text-slate-500 dark:text-slate-300">
-          Поточна операція: <span className="font-semibold text-slate-900 dark:text-white">{currentOperation}</span>
-        </p>
-      )}
-    </section>
+    </div>
   )
 }
+
+export default OperationsPanel

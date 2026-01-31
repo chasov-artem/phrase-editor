@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useStore } from '@store/useStore'
 import { normalizeText } from '@utils/textOperations'
 
@@ -11,6 +11,9 @@ export const useTextEditor = () => {
     clearAll,
     copyToClipboard,
   } = useStore()
+  const lastOperationTimestamp = useStore(
+    (state) => state.lastOperationTimestamp,
+  )
 
   const [isResultVisible, setIsResultVisible] = useState(false)
 
@@ -34,6 +37,12 @@ export const useTextEditor = () => {
   const toggleResultView = useCallback(() => {
     setIsResultVisible((prev) => !prev)
   }, [setIsResultVisible])
+
+  useEffect(() => {
+    if (lastOperationTimestamp > 0) {
+      setIsResultVisible(true)
+    }
+  }, [lastOperationTimestamp])
 
   return {
     rawText,
