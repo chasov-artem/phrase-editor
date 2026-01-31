@@ -47,7 +47,7 @@ npm run dev
   ```
 
 - **Netlify**: drag & drop папку `dist`.
-- **Vercel**: пуш на GitHub (або використовуйте `vercel` CLI для ручного деплою).
+- **Vercel**: пуш на GitHub (або використовуйте `vercel` CLI для ручного деплою). Для SPA налаштування додано `vercel.json` з rewrite на `index.html`.
 - **GitHub Pages**: workflow `.github/workflows/deploy.yml` автоматично будує `npm run build` і пушить `./dist` через `peaceiris/actions-gh-pages@v3`.
 
 ### Змінні середовища
