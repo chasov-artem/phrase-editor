@@ -118,6 +118,29 @@ export function applyAllTextOperations(): {
         .split('\n')
         .filter((line) => line.trim().length > 0)
         .join('\n'),
+    number_lines: (text) => {
+      const lines = text.split('\n')
+      return lines.map((line, index) => `${index + 1}. ${line}`).join('\n')
+    },
+    number_lines_padded: (text) => {
+      const lines = text.split('\n')
+      const maxDigits = String(lines.length).length
+      return lines
+        .map((line, index) => {
+          const number = String(index + 1).padStart(maxDigits, '0')
+          return `${number}. ${line}`
+        })
+        .join('\n')
+    },
+    join_lines: (text) => {
+      const lines = text.split('\n').filter((line) => line.trim().length > 0)
+      return lines.join(' ')
+    },
+    split_lines: (text) => {
+      // Розбиваємо по пробілах, табуляції та іншим роздільникам
+      const words = text.split(/\s+/).filter((word) => word.length > 0)
+      return words.join('\n')
+    },
   }
 }
 

@@ -27,7 +27,7 @@ export const SettingsPanel: React.FC = () => {
   const clearCache = () => {
     if (
       window.confirm(
-        'Очистити кеш операцій? Це прискорить наступні операції, але видалить збережені результати.',
+        'Clear operation cache? This will speed up next operations but will remove saved results.',
       )
     ) {
       operationCache.clear()
@@ -36,10 +36,10 @@ export const SettingsPanel: React.FC = () => {
   }
 
   const clearDatabase = () => {
-    if (window.confirm('Очистити всю базу даних? Ця дія незворотна.')) {
+    if (window.confirm('Clear entire database? This action is irreversible.')) {
       indexedDB.deleteDatabase('phrase-editor-db')
       setDbStats(null)
-      alert('Базу даних очищено')
+      alert('Database cleared')
     }
   }
 
@@ -51,7 +51,7 @@ export const SettingsPanel: React.FC = () => {
           loadStats()
         }}
         className="fixed bottom-4 right-4 p-3 bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-full shadow-lg z-50"
-        title="Налаштування"
+        title="Settings"
       >
         <Settings className="w-6 h-6" />
       </button>
@@ -66,9 +66,9 @@ export const SettingsPanel: React.FC = () => {
                     <Settings className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-800 dark:text-white">Налаштування</h3>
+                    <h3 className="text-xl font-semibold text-gray-800 dark:text-white">Settings</h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Керування продуктивністю та збереженням даних
+                      Performance and data storage management
                     </p>
                   </div>
                 </div>
@@ -84,15 +84,15 @@ export const SettingsPanel: React.FC = () => {
                 <section>
                   <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4 flex items-center space-x-2">
                     <Cpu className="w-5 h-5" />
-                    <span>Продуктивність</span>
+                    <span>Performance</span>
                   </h4>
 
                   <div className="space-y-4">
                     <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
                       <div>
-                        <div className="font-medium text-gray-800 dark:text-gray-200">Віртуалізація</div>
+                        <div className="font-medium text-gray-800 dark:text-gray-200">Virtualization</div>
                         <div className="text-sm text-gray-500 dark:text-gray-400">
-                          Ввімкнути для текстів понад 500 рядків
+                          Enable for texts over 500 rows
                         </div>
                       </div>
                       <div className="relative">
@@ -118,9 +118,9 @@ export const SettingsPanel: React.FC = () => {
 
                     <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
                       <div>
-                        <div className="font-medium text-gray-800 dark:text-gray-200">Автозбереження</div>
+                        <div className="font-medium text-gray-800 dark:text-gray-200">Auto-save</div>
                         <div className="text-sm text-gray-500 dark:text-gray-400">
-                          Зберігати зміни автоматично
+                          Automatically save changes
                         </div>
                       </div>
                       <div className="relative">
@@ -155,23 +155,23 @@ export const SettingsPanel: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
                       <div className="flex items-center justify-between mb-3">
-                        <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Кеш операцій</div>
+                        <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Operation Cache</div>
                         <button
                           onClick={clearCache}
                           className="text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
                         >
-                          Очистити
+                          Clear
                         </button>
                       </div>
                       {cacheStats ? (
                         <div className="space-y-2 text-sm">
                           <div className="flex justify-between">
-                            <span className="text-gray-500 dark:text-gray-400">Записів:</span>
+                            <span className="text-gray-500 dark:text-gray-400">Entries:</span>
                             <span className="font-mono">{cacheStats.entries}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-500 dark:text-gray-400">Розмір:</span>
-                            <span className="font-mono">{Math.round(cacheStats.size / 1024)} КБ</span>
+                            <span className="text-gray-500 dark:text-gray-400">Size:</span>
+                            <span className="font-mono">{Math.round(cacheStats.size / 1024)} KB</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-gray-500 dark:text-gray-400">Hit Rate:</span>
@@ -179,53 +179,53 @@ export const SettingsPanel: React.FC = () => {
                           </div>
                         </div>
                       ) : (
-                        <p className="text-gray-400 dark:text-gray-500 text-sm">Статистика не завантажена</p>
+                        <p className="text-gray-400 dark:text-gray-500 text-sm">Statistics not loaded</p>
                       )}
                     </div>
 
                     <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
                       <div className="flex items-center justify-between mb-3">
-                        <div className="text-sm font-medium text-gray-700 dark:text-gray-300">База даних</div>
+                        <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Database</div>
                         <button
                           onClick={clearDatabase}
                           className="text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
                         >
-                          Очистити
+                          Clear
                         </button>
                       </div>
                       {dbStats ? (
                         <div className="space-y-2 text-sm">
                           <div className="flex justify-between">
-                            <span className="text-gray-500 dark:text-gray-400">Записів:</span>
+                            <span className="text-gray-500 dark:text-gray-400">Entries:</span>
                             <span className="font-mono">{dbStats.totalEntries}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-500 dark:text-gray-400">Розмір:</span>
-                            <span className="font-mono">{Math.round(dbStats.totalSize / 1024 / 1024)} МБ</span>
+                            <span className="text-gray-500 dark:text-gray-400">Size:</span>
+                            <span className="font-mono">{Math.round(dbStats.totalSize / 1024 / 1024)} MB</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-500 dark:text-gray-400">Ліміт:</span>
-                            <span className="font-mono">{Math.round(dbStats.maxSize / 1024 / 1024)} МБ</span>
+                            <span className="text-gray-500 dark:text-gray-400">Limit:</span>
+                            <span className="font-mono">{Math.round(dbStats.maxSize / 1024 / 1024)} MB</span>
                           </div>
                         </div>
                       ) : (
-                        <p className="text-gray-400 dark:text-gray-500 text-sm">Статистика не завантажена</p>
+                        <p className="text-gray-400 dark:text-gray-500 text-sm">Statistics not loaded</p>
                       )}
                     </div>
                   </div>
                 </section>
 
                 <section>
-                  <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">Інформація про додаток</h4>
+                  <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">Application Information</h4>
 
                   <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
                     <div className="space-y-3 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-500 dark:text-gray-400">Версія:</span>
+                        <span className="text-gray-500 dark:text-gray-400">Version:</span>
                         <span className="font-mono">{import.meta.env.VITE_APP_VERSION || '1.0.0'}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500 dark:text-gray-400">Збірка:</span>
+                        <span className="text-gray-500 dark:text-gray-400">Build:</span>
                         <span className="font-mono">{import.meta.env.VITE_APP_BUILD_TIME || '—'}</span>
                       </div>
                       <div className="flex justify-between">
@@ -246,7 +246,7 @@ export const SettingsPanel: React.FC = () => {
                   onClick={() => setIsOpen(false)}
                   className="w-full py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
                 >
-                  Зберегти та закрити
+                  Save and close
                 </button>
               </div>
             </div>

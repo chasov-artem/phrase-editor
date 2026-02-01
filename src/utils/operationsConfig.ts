@@ -147,4 +147,30 @@ export const operationsConfig: OperationConfig[] = [
     description: 'Remove blank lines',
     group: 'Sorting & Uniqueness',
   },
+
+  // Additional operations
+  {
+    id: 'number_lines',
+    title: 'Number lines',
+    description: 'Add line numbers: 1. 2. 3.',
+    group: 'Cleanup',
+  },
+  {
+    id: 'number_lines_padded',
+    title: 'Number lines (padded)',
+    description: 'Add padded line numbers: 01. 02. 03.',
+    group: 'Cleanup',
+  },
+  {
+    id: 'join_lines',
+    title: 'Join lines',
+    description: 'Join all lines into one line with spaces',
+    group: 'Cleanup',
+  },
+  {
+    id: 'split_lines',
+    title: 'Split into lines',
+    description: 'Split text by spaces into separate lines',
+    group: 'Cleanup',
+  },
 ]

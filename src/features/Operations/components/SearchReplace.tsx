@@ -8,6 +8,7 @@ import {
   CaseSensitive,
 } from 'lucide-react'
 import { usePerformance } from '../../../providers/PerformanceProvider'
+import { useToastContext } from '@providers/ToastProvider'
 
 export const SearchReplace: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -26,6 +27,7 @@ export const SearchReplace: React.FC = () => {
   const setIsProcessing = useStore((state) => state.setIsProcessing)
   const isProcessing = useStore((state) => state.isProcessing)
   const { worker } = usePerformance()
+  const { success, error } = useToastContext()
 
   const handleReplace = async () => {
     if (isProcessing || worker.isBusy) return
@@ -62,8 +64,13 @@ export const SearchReplace: React.FC = () => {
       })
       addToHistory(result)
       setLastOperationTimestamp(Date.now())
-    } catch (error) {
-      console.error('Search & Replace failed:', error)
+      success('Search and replace completed successfully', 3000)
+    } catch (err) {
+      console.error('Search & Replace failed:', err)
+      error(
+        `Search and replace error: ${err instanceof Error ? err.message : 'Unknown error'}`,
+        5000,
+      )
     } finally {
       setIsProcessing(false)
     }
@@ -185,10 +192,13 @@ export const SearchReplace: React.FC = () => {
               void handleReplace()
             }}
             disabled={!searchTerm.trim() || isProcessing}
+            aria-label="Apply search and replace"
+            aria-disabled={!searchTerm.trim() || isProcessing}
             className={`
               w-full py-1.5 px-2 rounded font-medium text-xs
               flex items-center justify-center space-x-1.5
               transition-all duration-200
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1
               ${!searchTerm.trim() || isProcessing
                 ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
                 : 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white'}

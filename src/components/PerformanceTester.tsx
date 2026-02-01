@@ -4,6 +4,7 @@ import { operationCache } from '@utils/cache'
 import { indexedDBService } from '@utils/indexedDB'
 import { applyOperationToText } from '@utils/textOperationsExtended'
 import { Zap, Timer, Database, AlertTriangle, CheckCircle } from 'lucide-react'
+import { useToastContext } from '@providers/ToastProvider'
 
 interface TestResult {
   operation: string
@@ -16,6 +17,7 @@ interface TestResult {
 export const PerformanceTester: FC = () => {
   const [isTesting, setIsTesting] = useState(false)
   const [testResults, setTestResults] = useState<TestResult[]>([])
+  const { success, error } = useToastContext()
 
   const generateTestData = (lines: number): string => {
     const words = [
@@ -142,6 +144,15 @@ export const PerformanceTester: FC = () => {
 
     setTestResults(results)
     setIsTesting(false)
+    const successfulCount = results.filter((r) => r.success).length
+    if (successfulCount === results.length) {
+      success(`All tests passed successfully (${results.length})`, 4000)
+    } else {
+      error(
+        `Tests completed: ${successfulCount}/${results.length} successful`,
+        5000,
+      )
+    }
   }
 
   const getAveragePerformance = () => {
@@ -171,10 +182,10 @@ export const PerformanceTester: FC = () => {
           </div>
           <div className="min-w-0 flex-1">
             <h3 className="text-sm font-semibold text-gray-800 dark:text-white">
-              Тест продуктивності
+              Performance Test
             </h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-              Перевірка операцій з довгими текстами
+              Testing operations with long texts
             </p>
           </div>
         </div>
@@ -190,12 +201,12 @@ export const PerformanceTester: FC = () => {
           {isTesting ? (
             <>
               <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              <span>Тест...</span>
+              <span>Testing...</span>
             </>
           ) : (
             <>
               <Timer className="w-3.5 h-3.5" />
-              <span>Запустити</span>
+              <span>Run</span>
             </>
           )}
         </button>
@@ -207,7 +218,7 @@ export const PerformanceTester: FC = () => {
             <div className="h-full bg-purple-600 animate-pulse w-full" />
           </div>
           <p className="text-sm text-center text-gray-500 dark:text-gray-400">
-            Вимірюється час та пам’ять при обробці великих наборів даних...
+            Measuring time and memory when processing large datasets...
           </p>
         </div>
       ) : testResults.length > 0 ? (
@@ -215,13 +226,13 @@ export const PerformanceTester: FC = () => {
           <div className="grid grid-cols-2 gap-2">
             <div className="bg-gray-50 dark:bg-gray-900 rounded p-2">
               <div className="flex items-center justify-between gap-2">
-                <div className="text-xs text-gray-500 truncate">Тестів</div>
+                <div className="text-xs text-gray-500 truncate">Tests</div>
                 <div className="text-sm font-semibold text-gray-900 dark:text-white flex-shrink-0">{testResults.length}</div>
               </div>
             </div>
             <div className="bg-gray-50 dark:bg-gray-900 rounded p-2">
               <div className="flex items-center justify-between gap-2">
-                <div className="text-xs text-gray-500 truncate">Успішно</div>
+                <div className="text-xs text-gray-500 truncate">Successful</div>
                 <div className="text-sm font-semibold text-green-600 dark:text-green-400 flex-shrink-0">
                   {testResults.filter((r) => r.success).length}
                 </div>
@@ -231,17 +242,17 @@ export const PerformanceTester: FC = () => {
               <>
                 <div className="bg-gray-50 dark:bg-gray-900 rounded p-2">
                   <div className="flex items-center justify-between gap-2">
-                    <div className="text-xs text-gray-500 truncate">Середній час</div>
-                    <div className="text-sm font-semibold text-orange-600 dark:text-orange-400 flex-shrink-0 truncate" title={`${avg.avgTime} мс`}>
-                      {avg.avgTime} мс
+                    <div className="text-xs text-gray-500 truncate">Avg time</div>
+                    <div className="text-sm font-semibold text-orange-600 dark:text-orange-400 flex-shrink-0 truncate" title={`${avg.avgTime} ms`}>
+                      {avg.avgTime} ms
                     </div>
                   </div>
                 </div>
                 <div className="bg-gray-50 dark:bg-gray-900 rounded p-2">
                   <div className="flex items-center justify-between gap-2">
-                    <div className="text-xs text-gray-500 truncate">Швидкість</div>
-                    <div className="text-sm font-semibold text-purple-600 dark:text-purple-400 flex-shrink-0 truncate" title={`${avg.avgLinesPerMs} ряд/мс`}>
-                      {avg.avgLinesPerMs} ряд/мс
+                    <div className="text-xs text-gray-500 truncate">Speed</div>
+                    <div className="text-sm font-semibold text-purple-600 dark:text-purple-400 flex-shrink-0 truncate" title={`${avg.avgLinesPerMs} rows/ms`}>
+                      {avg.avgLinesPerMs} rows/ms
                     </div>
                   </div>
                 </div>
@@ -253,11 +264,11 @@ export const PerformanceTester: FC = () => {
             <table className="min-w-full text-xs">
               <thead>
                 <tr className="border-b border-gray-200 dark:border-gray-700">
-                  <th className="text-left py-1.5 px-2">Операція</th>
-                  <th className="text-left py-1.5 px-2">Рядків</th>
-                  <th className="text-left py-1.5 px-2">Час</th>
-                  <th className="text-left py-1.5 px-2">Пам'ять</th>
-                  <th className="text-left py-1.5 px-2">Статус</th>
+                  <th className="text-left py-1.5 px-2">Operation</th>
+                  <th className="text-left py-1.5 px-2">Rows</th>
+                  <th className="text-left py-1.5 px-2">Time</th>
+                  <th className="text-left py-1.5 px-2">Memory</th>
+                  <th className="text-left py-1.5 px-2">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -289,7 +300,7 @@ export const PerformanceTester: FC = () => {
                       </div>
                     </td>
                     <td className="py-1.5 px-2 font-mono text-xs">
-                      {result.memoryMB ? `${result.memoryMB} МБ` : '—'}
+                      {result.memoryMB ? `${result.memoryMB} MB` : '—'}
                     </td>
                     <td className="py-1.5 px-2">
                       <span
@@ -299,7 +310,7 @@ export const PerformanceTester: FC = () => {
                             : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
                         }`}
                       >
-                        {result.success ? 'Успішно' : 'Помилка'}
+                        {result.success ? 'Success' : 'Error'}
                       </span>
                     </td>
                   </tr>
@@ -310,7 +321,7 @@ export const PerformanceTester: FC = () => {
 
           <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-100 dark:border-blue-800">
             <h4 className="text-xs font-semibold text-blue-800 dark:text-blue-300 mb-1.5">
-              Рекомендації
+              Recommendations
             </h4>
             <ul className="space-y-1 text-xs text-blue-700 dark:text-blue-200">
               {(() => {
@@ -318,26 +329,26 @@ export const PerformanceTester: FC = () => {
                 const slowTests = testResults.filter((r) => r.timeMs > 1000 && r.success)
                 if (slowTests.length > 0) {
                   recommendations.push(
-                    'Деякі операції >1 сек. Розгляньте запуск через Web Worker/відкладені виклики.',
+                    'Some operations >1 sec. Consider running via Web Worker/deferred calls.',
                   )
                 }
 
                 const memoryTests = testResults.filter((r) => r.memoryMB && r.memoryMB > 50)
                 if (memoryTests.length > 0) {
                   recommendations.push(
-                    'Деякі операції використовують багато пам’яті. Увімкніть віртуалізацію для великих текстів.',
+                    'Some operations use a lot of memory. Enable virtualization for large texts.',
                   )
                 }
 
                 if (avg && avg.avgLinesPerMs < 10) {
                   recommendations.push(
-                    'Швидкість обробки низька. Перевірте налаштування оптимізації/worker.',
+                    'Processing speed is low. Check optimization/worker settings.',
                   )
                 }
 
                 if (recommendations.length === 0) {
                   recommendations.push(
-                    'Продуктивність виглядає стабільною з обраними параметрами.',
+                    'Performance looks stable with selected parameters.',
                   )
                 }
 
@@ -354,8 +365,8 @@ export const PerformanceTester: FC = () => {
       ) : (
         <div className="text-center text-gray-500 dark:text-gray-400 py-4">
           <Database className="w-10 h-10 mx-auto mb-2 opacity-50" />
-          <p>Натисніть “Запустити тест”, щоб перевірити роботу з великими даними.</p>
-          <p className="text-xs mt-1">Тест охоплює від 100 до 50 000 рядків.</p>
+          <p>Click "Run test" to check work with large data.</p>
+          <p className="text-xs mt-1">The test covers from 100 to 50,000 rows.</p>
         </div>
       )}
 
@@ -363,19 +374,19 @@ export const PerformanceTester: FC = () => {
         <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <div className="text-xs">Використано пам’яті</div>
+              <div className="text-xs">Memory used</div>
               <div className="font-mono">
-                {Math.round(((performance as any).memory.usedJSHeapSize || 0) / 1024 / 1024)} МБ
+                {Math.round(((performance as any).memory.usedJSHeapSize || 0) / 1024 / 1024)} MB
               </div>
             </div>
             <div>
-              <div className="text-xs">Ліміт пам’яті</div>
+              <div className="text-xs">Memory limit</div>
               <div className="font-mono">
-                {Math.round(((performance as any).memory.jsHeapSizeLimit || 0) / 1024 / 1024)} МБ
+                {Math.round(((performance as any).memory.jsHeapSizeLimit || 0) / 1024 / 1024)} MB
               </div>
             </div>
             <div>
-              <div className="text-xs">Ядер CPU</div>
+              <div className="text-xs">CPU cores</div>
               <div className="font-mono">{navigator.hardwareConcurrency || '—'}</div>
             </div>
             <div>

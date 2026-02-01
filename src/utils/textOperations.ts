@@ -80,6 +80,26 @@ export function applyTextOperation(
     }
     case 'remove_empty_lines':
       return lines.filter((line) => line.trim().length > 0).join('\n')
+    case 'number_lines': {
+      return lines.map((line, index) => `${index + 1}. ${line}`).join('\n')
+    }
+    case 'number_lines_padded': {
+      const maxDigits = String(lines.length).length
+      return lines
+        .map((line, index) => {
+          const number = String(index + 1).padStart(maxDigits, '0')
+          return `${number}. ${line}`
+        })
+        .join('\n')
+    }
+    case 'join_lines': {
+      const nonEmptyLines = lines.filter((line) => line.trim().length > 0)
+      return nonEmptyLines.join(' ')
+    }
+    case 'split_lines': {
+      const words = text.split(/\s+/).filter((word) => word.length > 0)
+      return words.join('\n')
+    }
     default: {
       const processedLines = lines.map((line) => {
         switch (operation) {

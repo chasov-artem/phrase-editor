@@ -22,6 +22,10 @@ export type TextOperationType =
   | 'sort_desc_cyrillic'
   | 'remove_duplicates'
   | 'remove_empty_lines'
+  | 'number_lines'
+  | 'number_lines_padded'
+  | 'join_lines'
+  | 'split_lines'
 
 export type OperationIdentifier = TextOperationType | 'search_replace'
 

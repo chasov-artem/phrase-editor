@@ -4,9 +4,11 @@ import Metrics from './features/Metrics/Metrics'
 import OperationsPanel from './features/Operations/OperationsPanel'
 import { useStore } from '@store/useStore'
 import { PerformanceProvider } from './providers/PerformanceProvider'
+import { ToastProvider } from '@providers/ToastProvider'
 import { ErrorBoundary } from '@components/ErrorBoundary'
 import { PerformanceTester } from '@components/PerformanceTester'
 import { SettingsPanel } from '@components/SettingsPanel'
+import { KeyboardShortcuts } from '@components/KeyboardShortcuts'
 
 export default function App() {
   const {
@@ -24,9 +26,11 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <PerformanceProvider>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-          <Header />
+      <ToastProvider>
+        <KeyboardShortcuts />
+        <PerformanceProvider>
+          <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+            <Header />
 
           <main className="container mx-auto px-4 py-8 max-w-7xl space-y-10">
             <section className="text-center">
@@ -86,8 +90,9 @@ export default function App() {
           </footer>
 
           <SettingsPanel />
-        </div>
-      </PerformanceProvider>
+          </div>
+        </PerformanceProvider>
+      </ToastProvider>
     </ErrorBoundary>
   )
 }

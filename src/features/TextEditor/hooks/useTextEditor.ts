@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useStore } from '@store/useStore'
 import { normalizeText } from '@utils/textOperations'
+import { useToastContext } from '@providers/ToastProvider'
 
 export const useTextEditor = () => {
   const {
@@ -30,9 +31,16 @@ export const useTextEditor = () => {
     setIsResultVisible(false)
   }, [clearAll, setIsResultVisible])
 
+  const { success, error } = useToastContext()
+
   const handleCopy = useCallback(async () => {
-    await copyToClipboard()
-  }, [copyToClipboard])
+    try {
+      await copyToClipboard()
+      success('Text copied to clipboard', 2000)
+    } catch (err) {
+      error('Error copying text', 3000)
+    }
+  }, [copyToClipboard, success, error])
 
   const toggleResultView = useCallback(() => {
     setIsResultVisible((prev) => !prev)

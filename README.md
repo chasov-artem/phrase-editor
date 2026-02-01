@@ -1,266 +1,438 @@
 # Phrase Editor
 
-Веб-інструмент для редагування списків фраз (кожна строчка — окрема фраза) з підтримкою до 10 000 рядків та набором текстових трансформацій.
+A web tool for editing phrase lists (each line is a separate phrase) with support for up to 10,000 rows and a set of text transformations.
 
 **Live Demo:** https://phrase-editor-pjxpgctr6-artems-projects-20cd3248.vercel.app/
 
-## Як запустити локально
+## How to run locally
 
 ```bash
-# Встановити залежності
+# Install dependencies
 npm install
 
-# Запустити dev сервер
+# Run dev server
 npm run dev
 
-# Збілдити для продакшену
+# Build for production
 npm run build
 
-# Переглянути продакшен збірку локально
+# Preview production build locally
 npm run preview
 ```
 
-Відкрийте [http://localhost:5173](http://localhost:5173) у браузері.
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-## Технології
+## Technologies
 
-- **React 19** + **TypeScript** — UI фреймворк
-- **Tailwind CSS** — стилізація
-- **Zustand** — управління станом
-- **Vite** — збірка та dev сервер
-- **Web Workers** — обробка великих текстів без блокування UI
-- **IndexedDB** — зберігання великих текстів (>5 MB)
-- **react-virtuoso** — віртуалізація для відображення довгих списків
+- **React 19** + **TypeScript** — UI framework
+- **Tailwind CSS** — styling
+- **Zustand** — state management
+- **Vite** — build tool and dev server
+- **Web Workers** — processing large texts without blocking UI
+- **IndexedDB** — storage for large texts (>5 MB)
+- **react-virtuoso** — virtualization for displaying long lists
 
-## Реалізовані функції
+## Implemented Features
 
 ### UI/UX
 
-- ✅ Велике текстове поле (textarea з віртуалізацією для >1000 рядків)
-- ✅ Панель операцій з кнопками (зліва)
-- ✅ Перегляд результату (перемикання між input/output у тому ж полі)
-- ✅ Метрики: кількість рядків, порожніх рядків, слів, символів, час виконання останньої операції
-- ✅ Очистити поле
-- ✅ Скопіювати результат у буфер
-- ✅ Імпорт/експорт .txt файлів (upload/download)
+- ✅ Large text field (textarea with virtualization for >1000 rows)
+- ✅ Operations panel with buttons (left side)
+- ✅ Result preview (toggle between input/output in the same field)
+- ✅ Metrics: number of rows, empty rows, words, characters, execution time of last operation
+- ✅ Clear field
+- ✅ Copy result to clipboard
+- ✅ Import/export .txt files (upload/download)
+- ✅ **File upload validation** (size and type checking)
+- ✅ **Toast notifications** for errors and success messages
+- ✅ **Drag & Drop** file support
+- ✅ **Keyboard shortcuts** (Ctrl+Z/Y for undo/redo, Ctrl+C for copy)
+- ✅ **Edit Line Modal** (replaces prompt() for better UX)
 
-### Операції обробки тексту
+### Text Processing Operations
 
-#### Регістр
+#### Case
 
-- ✅ Усі великі літери (`uppercase`)
-- ✅ Усі малі літери (`lowercase`)
-- ✅ Кожне слово з великої літери (`title_case`)
-- ✅ Лише перше слово з великої літери (`sentence_case`)
+- ✅ All uppercase (`uppercase`)
+- ✅ All lowercase (`lowercase`)
+- ✅ Each word capitalized (`title_case`)
+- ✅ Only first word capitalized (`sentence_case`)
 
-#### Символи / обрамлення
+#### Symbols / Wrapping
 
-- ✅ Додати + перед кожним словом (`add_plus_prefix`)
-- ✅ Видалити + перед словами (`remove_plus_prefix`)
-- ✅ Додати лапки навколо рядка (`add_quotes`)
-- ✅ Додати квадратні дужки навколо рядка (`add_brackets`)
-- ✅ Додати - на початок рядка (`add_dash_prefix`)
-- ✅ -[...] на початку (`add_dash_brackets_prefix`)
-- ✅ -"..." на початку (`add_dash_quotes_prefix`)
+- ✅ Add + before each word (`add_plus_prefix`)
+- ✅ Remove + before words (`remove_plus_prefix`)
+- ✅ Add quotes around line (`add_quotes`)
+- ✅ Add square brackets around line (`add_brackets`)
+- ✅ Add - at line start (`add_dash_prefix`)
+- ✅ -[...] at start (`add_dash_brackets_prefix`)
+- ✅ -"..." at start (`add_dash_quotes_prefix`)
 
-#### Очищення
+#### Cleaning
 
-- ✅ Видалити зайві пробіли (`trim_spaces`)
-- ✅ Видалити табуляцію (`remove_tabs`)
-- ✅ Видалити все праворуч після " -" (`remove_after_dash`)
-- ✅ Замінити пробіли на \_ (`replace_spaces_with_underscore`)
-- ✅ Видалити спецсимволи (`remove_special_chars`)
-- ✅ Замінити спецсимволи на пробіли (`replace_special_chars_with_spaces`)
+- ✅ Remove extra spaces (`trim_spaces`)
+- ✅ Remove tabs (`remove_tabs`)
+- ✅ Remove everything after " -" (`remove_after_dash`)
+- ✅ Replace spaces with \_ (`replace_spaces_with_underscore`)
+- ✅ Remove special characters (`remove_special_chars`)
+- ✅ Replace special characters with spaces (`replace_special_chars_with_spaces`)
 
-#### Пошук/заміна
+#### Search/Replace
 
-- ✅ Два поля: find і replace
-- ✅ Заміна по всіх рядках
-- ✅ Підтримка regex (опціонально)
-- ✅ Case sensitive опція
+- ✅ Two fields: find and replace
+- ✅ Replace across all lines
+- ✅ Regex support (optional)
+- ✅ Case sensitive option
 
-#### Сортування та унікальність
+#### Sorting and Uniqueness
 
-- ✅ Сортувати рядки А-Я (`sort_asc`) з підтримкою локалі uk-UA через `localeCompare`
-- ✅ Сортувати рядки Я-А (`sort_desc`)
-- ✅ Видалити дублікати рядків (`remove_duplicates`)
-- ✅ Видалити порожні рядки (`remove_empty_lines`)
+- ✅ Sort lines A-Z (`sort_asc`) with locale support via `localeCompare`
+- ✅ Sort lines Z-A (`sort_desc`)
+- ✅ Sort lines A-Я (Cyrillic ascending) (`sort_asc_cyrillic`)
+- ✅ Sort lines Я-А (Cyrillic descending) (`sort_desc_cyrillic`)
+- ✅ Remove duplicate lines (`remove_duplicates`)
+- ✅ Remove empty lines (`remove_empty_lines`)
 
-### Історія дій (Undo/Redo)
+### Action History (Undo/Redo)
 
-- ✅ Undo/Redo на необмежену кількість кроків (реалізовано через масив історії)
-- ✅ Крок = одне натискання операції або застосування пошуку/заміни
-- ✅ Після Undo і виконання нової операції — redo-гілка скидається (як у звичайних редакторах)
-- ✅ Історія зберігається в пам'яті, автоматично очищається при нових операціях після undo
+- ✅ Undo/Redo with unlimited steps (implemented via history array)
+- ✅ Step = one operation click or search/replace application
+- ✅ After Undo and executing new operation — redo branch is reset (like in regular editors)
+- ✅ History stored in memory, automatically cleared on new operations after undo
 
-## Рішення щодо продуктивності
+### Export Formats
+
+- ✅ Export as .txt file
+- ✅ Export as .csv file
+- ✅ Export as .json file
+
+## Project Requirements (Technical Specification)
+
+### Context
+Web tool for editing phrase lists (each line is a separate phrase). The tool must reliably work with volumes up to 10,000 rows and a set of typical text transformations.
+
+**Reference UI/Logic:** http://www.mikes-marketing-tools.com/keyword-tool/
+
+**Goal:** Check ability to build understandable UI/state architecture, accuracy of working with strings/Unicode, performance on large volumes, code quality, UX, and attention to details.
+
+### 1. Technologies and Limitations
+
+**Allowed:**
+- Any modern stack: React / Angular
+- Any UI-kit or custom CSS (Bootstrap/Tailwind/MUI — your choice)
+
+**Not required:**
+- Server-side code
+- Database
+- Authentication
+
+**Storage:**
+- In memory + can use LocalStorage/IndexedDB (e.g., for autosave/draft)
+
+**Important:**
+- Application must work in browser without backend
+- Mandatory deployment (Vercel/Netlify/GitHub Pages or your server)
+
+### 2. UI/UX (Minimum)
+
+**Page with:**
+- Large text field (textarea/editor) for pasting rows
+- Operations panel (buttons)
+- Ability to see "result" (in the same field or separate block — your choice)
+- Status/metrics: number of rows, number of empty rows, execution time of last operation (approximate is fine)
+
+**Functions:**
+- Clear field
+- Copy result to clipboard
+- Import/export .txt (upload/download) — preferred
+
+### 3. Text Processing Operations (Required)
+
+**Example input line:** `сок ЦІНА`
+
+**Case:**
+- All uppercase → `СІК ЦІНА`
+- All lowercase → `сік ціна`
+- Each word capitalized → `Сік Ціна`
+- Only first word capitalized → `Сік ціна`
+
+**Symbols / Wrapping:**
+- Add + before each word → `+сок +ціна`
+- Remove + before words → `сок ЦІНА`
+- Add quotes around line → `"Сік ЦІНА"`
+- Add square brackets around line → `[Сік ЦІНА]`
+- Add - at line start → `-Сік ЦІНА`
+- -[...] at start (dash + square brackets) → `-[сок ЦІНА]`
+- -"..." at start (dash + quotes) → `-"сок ЦІНА"`
+
+**Cleaning:**
+- Remove extra spaces (compress multiple spaces, remove spaces at edges)
+- Remove tabulation \t
+- Remove everything to the right after substring " -" (space+dash), including dash
+  - Example: `сік ціна - вишня` → `сік ціна`
+- Replace spaces with _ → `сок_ціна`
+- Remove special characters: `() \ ~ ! @#$%^&*_=+[]\{} | ; ' : " , / < > ?`
+- Replace special characters with spaces (same characters → space)
+
+**Search/Replace:**
+- Two fields: find and replace
+- Replace across all lines (without regex is enough; regex is a bonus)
+
+**Sorting and Uniqueness:**
+- Sort lines A-Z (consider locale ru/ua via localeCompare)
+- Sort lines Z-A
+- Remove duplicate lines (line by line)
+
+### 4. Action History (Required)
+
+- Undo/Redo minimum 10 steps
+- Step = one operation click (or "apply" search/replace)
+- After Undo and executing new operation — redo branch must reset (like in regular editors)
+
+### 5. Non-Functional Requirements
+
+**Performance:**
+- 10,000 rows: operations must execute without "freezing" interface
+- If operation is potentially heavy — use batching/requestAnimationFrame/setTimeout/Web Worker (any smart solution)
+- Cannot "render 10k DOM elements as rows" — work with text/array efficiently
+
+**Quality:**
+- Readable structure (modules/hooks/services/utilities — your choice)
+- Careful handling of empty rows, spaces at start/end
+- Errors should not break application
+
+### 6. Deliverables
+
+- Link to working version (deployment)
+- Link to repository (GitHub/GitLab)
+- README.md:
+  - How to run locally
+  - What solutions were adopted for performance/undo-redo
+  - What wasn't completed / what would be improved
+
+## Implementation Checklist
+
+### High Priority (Completed ✅)
+- [x] File upload validation
+- [x] Toast notifications for errors
+- [x] Replace prompt() with modal window
+- [x] Keyboard shortcuts (Ctrl+Z, Ctrl+Y, Ctrl+C)
+
+### Medium Priority (Completed ✅)
+- [x] Drag & Drop for files
+- [x] Toast notifications for successful operations
+- [ ] Empty rows handling improvements
+- [ ] Accessibility improvements
+
+### Nice to Have
+- [x] Export to CSV/JSON
+- [ ] Additional operations
+- [ ] Multilingual support
+
+## Recent Improvements
+
+### High Priority Improvements ✅
+
+1. **File Upload Validation**
+   - File size validation (max 10MB)
+   - File type validation (only .txt files)
+   - User-friendly error messages
+   - Loading indicator for large files
+
+2. **Error Handling**
+   - Toast notifications for errors
+   - User-friendly error messages
+   - Error messages shown to users instead of just console logs
+
+3. **Edit Line Modal**
+   - Replaced `prompt()` with a modal window
+   - Multi-line editing support
+   - Save/Cancel buttons
+   - Keyboard shortcuts (Ctrl+Enter to save, Esc to cancel)
+
+### Medium Priority Improvements ✅
+
+4. **Toast Notifications**
+   - Success notifications for completed operations
+   - Shows number of processed rows
+   - Auto-dismiss after 3 seconds
+
+5. **Keyboard Shortcuts**
+   - Ctrl+Z / Cmd+Z - Undo
+   - Ctrl+Y / Cmd+Y - Redo
+   - Ctrl+C / Cmd+C - Copy (if text is selected, copies selection; otherwise copies all text)
+   - Esc - Close modals
+
+6. **Drag & Drop for Files**
+   - Drag & drop support on text field
+   - Visual indicator when dragging
+   - File validation before upload
+
+## Performance Solutions
 
 ### Web Workers
 
-Всі операції обробки тексту виконуються в окремому Web Worker (`src/workers/text.worker.ts`), що запобігає блокуванню UI навіть при обробці 10 000+ рядків.
+All text processing operations are executed in a separate Web Worker (`src/workers/text.worker.ts`), preventing UI blocking even when processing 10,000+ rows.
 
-**Батчинг:**
+**Batching:**
 
-- Операції, що обробляються по рядках, розбиваються на батчі по 1000 рядків
-- Прогрес відображається в реальному часі через `postMessage`
-- Користувач бачить індикатор прогресу під час обробки
+- Operations processed by rows are split into batches of 1000 rows
+- Progress is displayed in real-time via `postMessage`
+- User sees progress indicator during processing
 
-**Приклад:**
+**Example:**
 
 ```typescript
-// Операції виконуються батчами по 1000 рядків
+// Operations are executed in batches of 1000 rows
 const batchSize = 1000;
 const batches = Math.ceil(lines.length / batchSize);
 for (let batchIndex = 0; batchIndex < batches; batchIndex++) {
-  // Обробка батчу
-  // Відправка прогресу
+  // Process batch
+  // Send progress
 }
 ```
 
-### Віртуалізація рендерингу
+### Rendering Virtualization
 
-Для текстів >1000 рядків автоматично вмикається віртуалізація через `react-virtuoso`:
+For texts >1000 rows, virtualization is automatically enabled via `react-virtuoso`:
 
-- Рендериться тільки видима частина тексту
-- Прокрутка працює плавно навіть з 50 000+ рядками
-- Можна вручну керувати через Settings Panel
+- Only visible portion of text is rendered
+- Scrolling works smoothly even with 50,000+ rows
+- Can be manually controlled via Settings Panel
 
-### Кешування операцій
+### Operation Caching
 
-**LRU Cache з TTL** (`src/utils/cache.ts`):
+**LRU Cache with TTL** (`src/utils/cache.ts`):
 
-- Зберігає результати важких операцій (сортування, видалення дублікатів)
-- Автоматично очищає старі записи
-- Прискорює повторні виклики з тими самими даними
+- Stores results of heavy operations (sorting, duplicate removal)
+- Automatically clears old entries
+- Speeds up repeated calls with the same data
 
 **Debouncing:**
 
-- Оновлення метрик та збереження стану відбувається з затримкою 500ms
-- Зменшує кількість операцій при швидкому введенні тексту
+- Metric updates and state saving happen with 500ms delay
+- Reduces number of operations during fast text input
 
-### IndexedDB для великих текстів
+### IndexedDB for Large Texts
 
-- Тексти >5 MB автоматично зберігаються в IndexedDB
-- Автоматичне очищення найстаріших записів при перевищенні 100 MB
-- Швидкий доступ до збережених текстів
+- Texts >5 MB are automatically stored in IndexedDB
+- Automatic cleanup of oldest entries when exceeding 100 MB
+- Fast access to saved texts
 
-### Оптимізація рендерингу
+### Rendering Optimization
 
-- Використання `useMemo` для обчислення метрик
-- Умовний рендеринг (не рендеримо таблицю, якщо немає даних)
-- Мінімізація ре-рендерів через правильне використання Zustand
+- Using `useMemo` for metric calculations
+- Conditional rendering (don't render table if no data)
+- Minimizing re-renders through proper Zustand usage
 
-## Архітектура
+## Architecture
 
-### Структура проекту
+### Project Structure
 
 ```
 src/
-├── components/          # Загальні компоненти (ErrorBoundary, PerformanceTester, SettingsPanel)
-├── features/            # Функціональні модулі
-│   ├── Metrics/         # Панель метрик
-│   ├── Operations/      # Панель операцій та кнопки
-│   └── TextEditor/      # Текстовий редактор з віртуалізацією
-├── hooks/               # Кастомні хуки (useDebouncedCallback, useTextWorker)
-├── providers/           # React провайдери (PerformanceProvider)
+├── components/          # Common components (ErrorBoundary, PerformanceTester, SettingsPanel, Toast, EditLineModal, KeyboardShortcuts)
+├── features/            # Functional modules
+│   ├── Metrics/         # Metrics panel
+│   ├── Operations/      # Operations panel and buttons
+│   └── TextEditor/      # Text editor with virtualization
+├── hooks/               # Custom hooks (useDebouncedCallback, useTextWorker, useFileDrop, useKeyboardShortcuts, useToast)
+├── providers/           # React providers (PerformanceProvider, ToastProvider)
 ├── store/               # Zustand store (useStore.ts)
-├── types/               # TypeScript типи
-├── utils/               # Утиліти
-│   ├── cache.ts         # LRU кеш операцій
-│   ├── indexedDB.ts     # IndexedDB сервіс
-│   ├── localStorage.ts  # LocalStorage сервіс
-│   ├── textOperations.ts        # Базові операції
-│   ├── textOperationsExtended.ts # Розширені операції
-│   └── operationsConfig.ts      # Конфігурація операцій
+├── types/               # TypeScript types
+├── utils/               # Utilities
+│   ├── cache.ts         # LRU cache for operations
+│   ├── indexedDB.ts     # IndexedDB service
+│   ├── localStorage.ts  # LocalStorage service
+│   ├── textOperations.ts        # Basic operations
+│   ├── textOperationsExtended.ts # Extended operations
+│   └── operationsConfig.ts      # Operations configuration
 └── workers/             # Web Workers
-    └── text.worker.ts   # Worker для обробки текстів
+    └── text.worker.ts   # Worker for text processing
 ```
 
-### Управління станом
+### State Management
 
 **Zustand Store** (`src/store/useStore.ts`):
 
-- Централізоване управління станом додатку
-- Історія операцій (undo/redo)
-- Метрики тексту та операцій
-- Налаштування (віртуалізація, автозбереження)
+- Centralized application state management
+- Operation history (undo/redo)
+- Text and operation metrics
+- Settings (virtualization, autosave)
 
-### Обробка помилок
+### Error Handling
 
 **ErrorBoundary** (`src/components/ErrorBoundary.tsx`):
 
-- Відловлює критичні помилки React
-- Зберігає стек помилок у localStorage
-- Показує дружнє UI з опціями відновлення
+- Catches critical React errors
+- Saves error stack to localStorage
+- Shows user-friendly UI with recovery options
 
-## Деплой
+**Toast Notifications** (`src/components/Toast.tsx`):
+
+- Success, error, info, and warning notifications
+- Auto-dismiss with configurable duration
+- Non-blocking user feedback
+
+## Deployment
 
 ### Vercel
 
-Проект налаштований для деплою на Vercel:
+Project is configured for deployment on Vercel:
 
-- `vercel.json` містить конфігурацію для SPA routing
-- Автоматичний деплой при push на GitHub
+- `vercel.json` contains configuration for SPA routing
+- Automatic deployment on GitHub push
 - Build command: `npm run build`
 - Output directory: `dist`
 
 ### GitHub Pages
 
-Workflow `.github/workflows/deploy.yml` автоматично:
+Workflow `.github/workflows/deploy.yml` automatically:
 
-1. Встановлює залежності (`npm ci`)
-2. Білдить проект (`npm run build`)
-3. Деплоїть через `peaceiris/actions-gh-pages@v3`
+1. Installs dependencies (`npm ci`)
+2. Builds project (`npm run build`)
+3. Deploys via `peaceiris/actions-gh-pages@v3`
 
 ### Netlify
 
-Можна використати drag & drop папки `dist` або налаштувати автоматичний деплой з GitHub.
+You can use drag & drop of the `dist` folder or configure automatic deployment from GitHub.
 
-## Що не встигли / Що б покращили
+## Future Improvements
 
-### Покращення, які можна додати:
+### Potential Enhancements:
 
-1. **Експорт в інші формати:**
+1. **Additional Export Formats:**
+   - Excel (via library)
 
-   - CSV
-   - JSON
-   - Excel
+2. **Additional Operations:**
+   - Join lines with separator
+   - Split lines by separator
+   - Number lines (1. 2. 3. or 01. 02. 03.)
+   - Filter lines by condition
 
-2. **Додаткові операції:**
+3. **UX Improvements:**
+   - Real-time autosave with conflict resolution
+   - Improved dark theme
 
-   - Об'єднання рядків з роздільником
-   - Розбиття рядків за роздільником
-   - Нумерація рядків
-   - Фільтрація рядків за умовою
+4. **Performance:**
+   - Streaming processing for very large files (>100 MB)
+   - WebAssembly for critical operations
+   - Service Worker for offline work
 
-3. **Покращення UX:**
+5. **Testing:**
+   - Unit tests for operations
+   - E2E tests for critical scenarios
+   - Performance tests (PerformanceTester exists, but can be automated)
 
-   - Гарячі клавіші для операцій
-   - Drag & drop файлів
-   - Автозбереження в реальному часі з конфлікт-резолвінгом
-   - Темна тема (вже є, але можна покращити)
+6. **Documentation:**
+   - Detailed API documentation
+   - Usage examples
+   - Video tutorial
 
-4. **Продуктивність:**
-
-   - Streaming обробка для дуже великих файлів (>100 MB)
-   - WebAssembly для критичних операцій
-   - Service Worker для офлайн роботи
-
-5. **Тестування:**
-
-   - Unit тести для операцій
-   - E2E тести для критичних сценаріїв
-   - Performance тести (вже є PerformanceTester, але можна автоматизувати)
-
-6. **Документація:**
-   - Детальна документація API
-   - Приклади використання
-   - Відео-туторіал
-
-## Ліцензія
+## License
 
 MIT
 
-## Автор
+## Author
 
 Chasov Artem

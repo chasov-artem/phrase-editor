@@ -14,6 +14,7 @@ export default defineConfig({
       '@styles': resolve(__dirname, 'src/styles'),
       '@utils': resolve(__dirname, 'src/utils'),
       '@types': resolve(__dirname, 'src/types'),
+      '@providers': resolve(__dirname, 'src/providers'),
     },
   },
   worker: {

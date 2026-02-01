@@ -12,7 +12,7 @@ interface TextAreaProps {
 export const TextArea: React.FC<TextAreaProps> = ({
   value,
   onChange,
-  placeholder = 'Вставте фрази, кожна з нового рядка...',
+  placeholder = 'Paste phrases, each on a new line...',
   disabled = false,
   className = '',
   autoFocus = false,
@@ -54,6 +54,8 @@ export const TextArea: React.FC<TextAreaProps> = ({
         ${className}
       `}
       rows={8}
+      aria-label="Text editor input"
+      aria-multiline="true"
     />
   )
 }

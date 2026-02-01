@@ -48,6 +48,10 @@ const getIconForOperation = (id: TextOperationType) => {
     sort_desc_cyrillic: <ArrowUpDown className="w-3 h-3" />,
     remove_duplicates: <Check className="w-3 h-3" />,
     remove_empty_lines: <X className="w-3 h-3" />,
+    number_lines: <Hash className="w-3 h-3" />,
+    number_lines_padded: <Hash className="w-3 h-3" />,
+    join_lines: <Type className="w-3 h-3" />,
+    split_lines: <Type className="w-3 h-3" />,
   }
 
   return iconMap[id] || <Zap className="w-3 h-3" />
@@ -64,10 +68,13 @@ export const OperationButton: React.FC<OperationButtonProps> = ({
     <button
       onClick={() => onClick(id)}
       disabled={isProcessing}
+      aria-label={`${title}: ${description}`}
+      aria-disabled={isProcessing}
       className={`
         w-full p-1.5 rounded border text-left
         transition-all duration-200
         group
+        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
         ${isProcessing
           ? 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 cursor-not-allowed'
           : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20'}
