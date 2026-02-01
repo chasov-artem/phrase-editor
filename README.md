@@ -2,7 +2,7 @@
 
 A web tool for editing phrase lists (each line is a separate phrase) with support for up to 10,000 rows and a set of text transformations.
 
-**Live Demo:** https://phrase-editor-pjxpgctr6-artems-projects-20cd3248.vercel.app/
+**Live Demo:** https://phrase-editor-fifx2j0wk-artems-projects-20cd3248.vercel.app/
 
 ## How to run locally
 
