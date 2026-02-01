@@ -38,7 +38,7 @@ const Header: React.FC = () => {
             </button>
 
             <a
-              href="https://github.com"
+              href="https://github.com/chasov-artem/phrase-editor"
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"

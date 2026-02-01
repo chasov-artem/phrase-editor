@@ -62,15 +62,49 @@ export function applyAllTextOperations(): {
       text.replace(/[()\\~!@#$%^&*_=+\[\]{}|;':",./<>?`-]/g, ' '),
     sort_asc: (text) => {
       const lines = text.split('\n')
+      // Сортування латиницею (a-z) з локаллю en-US
       const sorted = [...lines].sort((a, b) =>
-        a.localeCompare(b, 'uk-UA', { sensitivity: 'base' }),
+        a.localeCompare(b, 'en-US', { 
+          sensitivity: 'base',
+          numeric: true,
+          caseFirst: 'false'
+        }),
       )
       return sorted.join('\n')
     },
     sort_desc: (text) => {
       const lines = text.split('\n')
+      // Сортування латиницею (z-a) з локаллю en-US
       const sorted = [...lines].sort((a, b) =>
-        b.localeCompare(a, 'uk-UA', { sensitivity: 'base' }),
+        b.localeCompare(a, 'en-US', { 
+          sensitivity: 'base',
+          numeric: true,
+          caseFirst: 'false'
+        }),
+      )
+      return sorted.join('\n')
+    },
+    sort_asc_cyrillic: (text) => {
+      const lines = text.split('\n')
+      // Сортування кирилицею (а-я) з локаллю uk-UA
+      const sorted = [...lines].sort((a, b) =>
+        a.localeCompare(b, 'uk-UA', { 
+          sensitivity: 'base',
+          numeric: true,
+          caseFirst: 'false'
+        }),
+      )
+      return sorted.join('\n')
+    },
+    sort_desc_cyrillic: (text) => {
+      const lines = text.split('\n')
+      // Сортування кирилицею (я-а) з локаллю uk-UA
+      const sorted = [...lines].sort((a, b) =>
+        b.localeCompare(a, 'uk-UA', { 
+          sensitivity: 'base',
+          numeric: true,
+          caseFirst: 'false'
+        }),
       )
       return sorted.join('\n')
     },

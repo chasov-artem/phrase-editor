@@ -42,18 +42,18 @@ export const TextArea: React.FC<TextAreaProps> = ({
       disabled={disabled}
       autoFocus={autoFocus}
       className={`
-        w-full min-h-[300px] p-4
+        w-full min-h-[200px] p-3
         bg-white dark:bg-gray-800
         border border-gray-300 dark:border-gray-600
-        rounded-lg
-        font-mono text-sm
+        rounded
+        font-mono text-xs
         resize-none
         focus:ring-2 focus:ring-blue-500 focus:border-transparent
         transition-all duration-200
         disabled:opacity-50 disabled:cursor-not-allowed
         ${className}
       `}
-      rows={10}
+      rows={8}
     />
   )
 }

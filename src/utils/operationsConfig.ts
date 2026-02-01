@@ -114,13 +114,25 @@ export const operationsConfig: OperationConfig[] = [
   {
     id: 'sort_asc',
     title: 'Sort A → Z',
-    description: 'Sort lines alphabetically (ascending)',
+    description: 'Sort lines alphabetically (ascending) - Latin alphabet',
     group: 'Sorting & Uniqueness',
   },
   {
     id: 'sort_desc',
     title: 'Sort Z → A',
-    description: 'Sort lines alphabetically (descending)',
+    description: 'Sort lines alphabetically (descending) - Latin alphabet',
+    group: 'Sorting & Uniqueness',
+  },
+  {
+    id: 'sort_asc_cyrillic',
+    title: 'Sort А → Я',
+    description: 'Sort lines alphabetically (ascending) - Cyrillic alphabet',
+    group: 'Sorting & Uniqueness',
+  },
+  {
+    id: 'sort_desc_cyrillic',
+    title: 'Sort Я → А',
+    description: 'Sort lines alphabetically (descending) - Cyrillic alphabet',
     group: 'Sorting & Uniqueness',
   },
   {

@@ -18,6 +18,8 @@ export type TextOperationType =
   | 'replace_special_chars_with_spaces'
   | 'sort_asc'
   | 'sort_desc'
+  | 'sort_asc_cyrillic'
+  | 'sort_desc_cyrillic'
   | 'remove_duplicates'
   | 'remove_empty_lines'
 

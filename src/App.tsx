@@ -38,58 +38,21 @@ export default function App() {
               </p>
             </section>
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-              <div className="lg:col-span-2 space-y-8">
-                <TextEditor />
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* Зліва - кнопки операцій */}
+              <div className="lg:col-span-3">
                 <OperationsPanel />
               </div>
 
-              <div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* По центру - поле для тексту */}
+              <div className="lg:col-span-6">
+                <TextEditor />
+              </div>
+
+              {/* Праворуч - метрики зверху, тест продуктивності знизу */}
+              <div className="lg:col-span-3 space-y-6">
+                <Metrics />
                 <PerformanceTester />
-
-                <div className="space-y-8">
-                  <Metrics />
-
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Action History</h3>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-                        <span>Undo steps:</span>
-                        <span className="font-mono">{undoSteps}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-                        <span>Redo steps:</span>
-                        <span className="font-mono">{redoSteps}</span>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <button
-                          onClick={undo}
-                          disabled={!canUndo() || isProcessing}
-                          className={`
-                            px-4 py-2 rounded-lg font-medium transition-colors
-                            ${!canUndo() || isProcessing
-                              ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                              : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}
-                          `}
-                        >
-                          ← Undo
-                        </button>
-                        <button
-                          onClick={redo}
-                          disabled={!canRedo() || isProcessing}
-                          className={`
-                            px-4 py-2 rounded-lg font-medium transition-colors
-                            ${!canRedo() || isProcessing
-                              ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                              : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}
-                          `}
-                        >
-                          Redo →
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </main>

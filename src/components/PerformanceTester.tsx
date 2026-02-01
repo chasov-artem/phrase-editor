@@ -163,17 +163,17 @@ export const PerformanceTester: FC = () => {
   const avg = getAveragePerformance()
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-            <Zap className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 space-y-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start space-x-2 min-w-0 flex-1">
+          <div className="p-1.5 bg-purple-100 dark:bg-purple-900/30 rounded flex-shrink-0">
+            <Zap className="w-4 h-4 text-purple-600 dark:text-purple-400" />
           </div>
-          <div>
-            <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-sm font-semibold text-gray-800 dark:text-white">
               Тест продуктивності
             </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
               Перевірка операцій з довгими текстами
             </p>
           </div>
@@ -181,20 +181,20 @@ export const PerformanceTester: FC = () => {
         <button
           onClick={runPerformanceTest}
           disabled={isTesting}
-          className={`px-5 py-2 rounded-lg font-medium flex items-center space-x-2 transition ${
+          className={`px-3 py-1.5 rounded font-medium flex items-center space-x-1.5 text-xs transition flex-shrink-0 ${
             isTesting
               ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
-              : 'bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white shadow-md hover:shadow-lg'
+              : 'bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white'
           }`}
         >
           {isTesting ? (
             <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
               <span>Тест...</span>
             </>
           ) : (
             <>
-              <Timer className="w-5 h-5" />
+              <Timer className="w-3.5 h-3.5" />
               <span>Запустити</span>
             </>
           )}
@@ -212,35 +212,35 @@ export const PerformanceTester: FC = () => {
         </div>
       ) : testResults.length > 0 ? (
         <>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-3 text-sm">
-              <div className="flex items-center justify-between">
-                <div className="text-xs text-gray-500">Тестів</div>
-                <div className="text-lg font-semibold text-gray-900 dark:text-white">{testResults.length}</div>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-gray-50 dark:bg-gray-900 rounded p-2">
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-xs text-gray-500 truncate">Тестів</div>
+                <div className="text-sm font-semibold text-gray-900 dark:text-white flex-shrink-0">{testResults.length}</div>
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-3 text-sm">
-              <div className="flex items-center justify-between">
-                <div className="text-xs text-gray-500">Успішно</div>
-                <div className="text-lg font-semibold text-green-600 dark:text-green-400">
+            <div className="bg-gray-50 dark:bg-gray-900 rounded p-2">
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-xs text-gray-500 truncate">Успішно</div>
+                <div className="text-sm font-semibold text-green-600 dark:text-green-400 flex-shrink-0">
                   {testResults.filter((r) => r.success).length}
                 </div>
               </div>
             </div>
             {avg && (
               <>
-                <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-3 text-sm">
-                  <div className="flex items-center justify-between">
-                    <div className="text-xs text-gray-500">Середній час</div>
-                    <div className="text-lg font-semibold text-orange-600 dark:text-orange-400">
+                <div className="bg-gray-50 dark:bg-gray-900 rounded p-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="text-xs text-gray-500 truncate">Середній час</div>
+                    <div className="text-sm font-semibold text-orange-600 dark:text-orange-400 flex-shrink-0 truncate" title={`${avg.avgTime} мс`}>
                       {avg.avgTime} мс
                     </div>
                   </div>
                 </div>
-                <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-3 text-sm">
-                  <div className="flex items-center justify-between">
-                    <div className="text-xs text-gray-500">Швидкість</div>
-                    <div className="text-lg font-semibold text-purple-600 dark:text-purple-400">
+                <div className="bg-gray-50 dark:bg-gray-900 rounded p-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="text-xs text-gray-500 truncate">Швидкість</div>
+                    <div className="text-sm font-semibold text-purple-600 dark:text-purple-400 flex-shrink-0 truncate" title={`${avg.avgLinesPerMs} ряд/мс`}>
                       {avg.avgLinesPerMs} ряд/мс
                     </div>
                   </div>
@@ -249,15 +249,15 @@ export const PerformanceTester: FC = () => {
             )}
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-sm">
+          <div className="overflow-x-auto -mx-4 px-4">
+            <table className="min-w-full text-xs">
               <thead>
                 <tr className="border-b border-gray-200 dark:border-gray-700">
-                  <th className="text-left py-2 px-3">Операція</th>
-                  <th className="text-left py-2 px-3">Рядків</th>
-                  <th className="text-left py-2 px-3">Час (мс)</th>
-                  <th className="text-left py-2 px-3">Пам'ять</th>
-                  <th className="text-left py-2 px-3">Статус</th>
+                  <th className="text-left py-1.5 px-2">Операція</th>
+                  <th className="text-left py-1.5 px-2">Рядків</th>
+                  <th className="text-left py-1.5 px-2">Час</th>
+                  <th className="text-left py-1.5 px-2">Пам'ять</th>
+                  <th className="text-left py-1.5 px-2">Статус</th>
                 </tr>
               </thead>
               <tbody>
@@ -266,34 +266,34 @@ export const PerformanceTester: FC = () => {
                     key={`${result.operation}-${index}`}
                     className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900/30"
                   >
-                    <td className="py-2 px-3 font-mono">
-                      <div className="flex items-center space-x-2">
+                    <td className="py-1.5 px-2 font-mono">
+                      <div className="flex items-center space-x-1.5 min-w-0">
                         {result.success ? (
-                          <CheckCircle className="w-4 h-4 text-green-500" />
+                          <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0" />
                         ) : (
-                          <AlertTriangle className="w-4 h-4 text-red-500" />
+                          <AlertTriangle className="w-3 h-3 text-red-500 flex-shrink-0" />
                         )}
-                        <span>{result.operation}</span>
+                        <span className="truncate" title={result.operation}>{result.operation}</span>
                       </div>
                     </td>
-                    <td className="py-2 px-3 font-mono">{result.lines.toLocaleString()}</td>
-                    <td className="py-2 px-3">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden">
+                    <td className="py-1.5 px-2 font-mono text-right">{result.lines.toLocaleString()}</td>
+                    <td className="py-1.5 px-2">
+                      <div className="flex items-center space-x-1.5">
+                        <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-1 overflow-hidden flex-shrink-0">
                           <div
                             className="h-full bg-blue-600 rounded-full"
                             style={{ width: `${Math.min(result.timeMs / 100, 100)}%` }}
                           />
                         </div>
-                        <span className="font-mono">{result.timeMs}</span>
+                        <span className="font-mono text-xs flex-shrink-0">{result.timeMs}</span>
                       </div>
                     </td>
-                    <td className="py-2 px-3 font-mono">
+                    <td className="py-1.5 px-2 font-mono text-xs">
                       {result.memoryMB ? `${result.memoryMB} МБ` : '—'}
                     </td>
-                    <td className="py-2 px-3">
+                    <td className="py-1.5 px-2">
                       <span
-                        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${
+                        className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-semibold ${
                           result.success
                             ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                             : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
@@ -308,11 +308,11 @@ export const PerformanceTester: FC = () => {
             </table>
           </div>
 
-          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
-            <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-300 mb-2">
+          <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-100 dark:border-blue-800">
+            <h4 className="text-xs font-semibold text-blue-800 dark:text-blue-300 mb-1.5">
               Рекомендації
             </h4>
-            <ul className="space-y-1 text-sm text-blue-700 dark:text-blue-200">
+            <ul className="space-y-1 text-xs text-blue-700 dark:text-blue-200">
               {(() => {
                 const recommendations: string[] = []
                 const slowTests = testResults.filter((r) => r.timeMs > 1000 && r.success)
@@ -352,16 +352,16 @@ export const PerformanceTester: FC = () => {
           </div>
         </>
       ) : (
-        <div className="text-center text-gray-500 dark:text-gray-400">
-          <Database className="w-12 h-12 mx-auto mb-3" />
+        <div className="text-center text-gray-500 dark:text-gray-400 py-4">
+          <Database className="w-10 h-10 mx-auto mb-2 opacity-50" />
           <p>Натисніть “Запустити тест”, щоб перевірити роботу з великими даними.</p>
           <p className="text-xs mt-1">Тест охоплює від 100 до 50 000 рядків.</p>
         </div>
       )}
 
       {(performance as any)?.memory && (
-        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 text-sm text-gray-500 dark:text-gray-400">
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400">
+          <div className="grid grid-cols-2 gap-2">
             <div>
               <div className="text-xs">Використано пам’яті</div>
               <div className="font-mono">

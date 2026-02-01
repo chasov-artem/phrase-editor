@@ -41,10 +41,30 @@ export function applyTextOperation(
   const lines = splitIntoLines(text)
 
   switch (operation) {
-    case 'sort_asc':
-      return [...lines].sort((a, b) => a.localeCompare(b)).join('\n')
-    case 'sort_desc':
-      return [...lines].sort((a, b) => b.localeCompare(a)).join('\n')
+    case 'sort_asc': {
+      // Сортування латиницею (a-z) з локаллю en-US
+      return [...lines].sort((a, b) => 
+        a.localeCompare(b, 'en-US', { sensitivity: 'base', numeric: true })
+      ).join('\n')
+    }
+    case 'sort_desc': {
+      // Сортування латиницею (z-a) з локаллю en-US
+      return [...lines].sort((a, b) => 
+        b.localeCompare(a, 'en-US', { sensitivity: 'base', numeric: true })
+      ).join('\n')
+    }
+    case 'sort_asc_cyrillic': {
+      // Сортування кирилицею (а-я) з локаллю uk-UA
+      return [...lines].sort((a, b) => 
+        a.localeCompare(b, 'uk-UA', { sensitivity: 'base', numeric: true })
+      ).join('\n')
+    }
+    case 'sort_desc_cyrillic': {
+      // Сортування кирилицею (я-а) з локаллю uk-UA
+      return [...lines].sort((a, b) => 
+        b.localeCompare(a, 'uk-UA', { sensitivity: 'base', numeric: true })
+      ).join('\n')
+    }
     case 'remove_duplicates': {
       const seen = new Set<string>()
       return lines

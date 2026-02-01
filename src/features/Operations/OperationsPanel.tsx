@@ -57,11 +57,25 @@ export const OperationsPanel: React.FC = () => {
         case 'sort_asc':
           result = await worker.execute<string>(
             'SORT',
-            { text: textToProcess, ascending: true, locale: 'uk-UA' },
+            { text: textToProcess, ascending: true, locale: 'en-US' },
             logProgress,
           )
           break
         case 'sort_desc':
+          result = await worker.execute<string>(
+            'SORT',
+            { text: textToProcess, ascending: false, locale: 'en-US' },
+            logProgress,
+          )
+          break
+        case 'sort_asc_cyrillic':
+          result = await worker.execute<string>(
+            'SORT',
+            { text: textToProcess, ascending: true, locale: 'uk-UA' },
+            logProgress,
+          )
+          break
+        case 'sort_desc_cyrillic':
           result = await worker.execute<string>(
             'SORT',
             { text: textToProcess, ascending: false, locale: 'uk-UA' },
@@ -137,112 +151,92 @@ export const OperationsPanel: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                <Zap className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
-                  Processing Operations
-                </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {operationsConfig.length} transformations available
-                </p>
-              </div>
+    <div className="space-y-2">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center space-x-1.5">
+            <div className="p-1 bg-blue-100 dark:bg-blue-900/30 rounded">
+              <Zap className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             </div>
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={undo}
-                disabled={!canUndo() || isProcessing}
-                className={`
-                  px-4 py-2 rounded-lg font-medium transition-colors
-                  ${!canUndo() || isProcessing
-                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}
-                `}
-              >
-                ← Undo
-              </button>
-              <button
-                onClick={redo}
-                disabled={!canRedo() || isProcessing}
-                className={`
-                  px-4 py-2 rounded-lg font-medium transition-colors
-                  ${!canRedo() || isProcessing
-                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}
-                `}
-              >
-                Redo →
-              </button>
-            </div>
+            <h3 className="text-sm font-semibold text-gray-800 dark:text-white">
+              Operations
+            </h3>
           </div>
-
-          <div className="space-y-6">
-            {Object.entries(groupedOperations).map(([groupTitle, operations]) => (
-              <OperationGroup
-                key={groupTitle}
-                title={groupTitle}
-                operations={operations}
-                onOperationClick={handleOperationClick}
-                isProcessing={isProcessing || worker.isBusy}
-              />
-            ))}
+          <div className="flex items-center space-x-1">
+            <button
+              onClick={undo}
+              disabled={!canUndo() || isProcessing}
+              className={`
+                px-2 py-1 text-xs rounded font-medium transition-colors
+                ${!canUndo() || isProcessing
+                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}
+              `}
+            >
+              ←
+            </button>
+            <button
+              onClick={redo}
+              disabled={!canRedo() || isProcessing}
+              className={`
+                px-2 py-1 text-xs rounded font-medium transition-colors
+                ${!canRedo() || isProcessing
+                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}
+              `}
+            >
+              →
+            </button>
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <SearchReplace />
+        <div className="space-y-1.5">
+          {Object.entries(groupedOperations).map(([groupTitle, operations]) => (
+            <OperationGroup
+              key={groupTitle}
+              title={groupTitle}
+              operations={operations}
+              onOperationClick={handleOperationClick}
+              isProcessing={isProcessing || worker.isBusy}
+            />
+          ))}
+        </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
-                Files
-              </h3>
+        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
+          <SearchReplace />
 
-              <div className="space-y-4">
-                <div>
-                  <label
-                    className="flex items-center justify-center space-x-3
-                      px-4 py-3 bg-gray-50 dark:bg-gray-900
-                      border-2 border-dashed border-gray-300 dark:border-gray-600
-                      rounded-lg cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 transition-colors"
-                  >
-                    <Upload className="w-5 h-5" />
-                    <span className="font-medium">Upload a .txt file</span>
-                    <input
-                      type="file"
-                      accept=".txt"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                      disabled={isProcessing}
-                    />
-                  </label>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-                    Files up to 10MB supported
-                  </p>
-                </div>
+          <div className="space-y-2">
+            <label
+              className="flex items-center justify-center space-x-1.5
+                px-2 py-1.5 bg-gray-50 dark:bg-gray-900
+                border border-dashed border-gray-300 dark:border-gray-600
+                rounded cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 transition-colors text-xs"
+            >
+              <Upload className="w-3 h-3" />
+              <span className="font-medium">Upload .txt</span>
+              <input
+                type="file"
+                accept=".txt"
+                onChange={handleFileUpload}
+                className="hidden"
+                disabled={isProcessing}
+              />
+            </label>
 
-                <button
-                  onClick={handleExport}
-                  disabled={!rawText || isProcessing}
-                  className={`
-                    w-full flex items-center justify-center space-x-3
-                    px-4 py-3 rounded-lg font-medium transition-colors
-                    ${!rawText || isProcessing
-                      ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                      : 'bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white shadow-md hover:shadow-lg'}
-                  `}
-                >
-                  <Download className="w-5 h-5" />
-                  <span>Export as .txt</span>
-                </button>
-              </div>
-            </div>
+            <button
+              onClick={handleExport}
+              disabled={!rawText || isProcessing}
+              className={`
+                w-full flex items-center justify-center space-x-1.5
+                px-2 py-1.5 rounded font-medium transition-colors text-xs
+                ${!rawText || isProcessing
+                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                  : 'bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white'}
+              `}
+            >
+              <Download className="w-3 h-3" />
+              <span>Export</span>
+            </button>
           </div>
         </div>
       </div>

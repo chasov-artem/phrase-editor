@@ -89,17 +89,50 @@ self.onmessage = (event: MessageEvent<WorkerRequest>) => {
 
       case 'SORT': {
         const { text: sortText, ascending, locale } = payload
-        const linesToSort = sortText
-          .split('\n')
-          .filter((line: string) => line.trim().length > 0)
+        const linesToSort = sortText.split('\n')
+        
+        // Функція для визначення, чи містить текст кирилицю
+        const hasCyrillic = (text: string): boolean => {
+          return /[а-яА-ЯёЁіІїЇєЄґҐ]/.test(text)
+        }
+        
+        // Визначаємо локаль на основі вмісту тексту
+        const detectLocale = (lines: string[]): string => {
+          const hasCyrillicText = lines.some((line) => hasCyrillic(line))
+          if (hasCyrillicText) {
+            // Якщо є кирилиця, використовуємо uk-UA для правильного сортування а-я
+            return locale || 'uk-UA'
+          }
+          // Якщо тільки латиниця, можна використати en-US або залишити uk-UA
+          return locale || 'uk-UA'
+        }
+        
+        const detectedLocale = detectLocale(linesToSort)
+        
+        // Сортуємо всі рядки (включаючи порожні, щоб зберегти структуру)
+        const sortedLines = [...linesToSort].sort((a: string, b: string) => {
+          // Порожні рядки завжди в кінці
+          const aEmpty = a.trim().length === 0
+          const bEmpty = b.trim().length === 0
+          if (aEmpty && !bEmpty) return 1
+          if (!aEmpty && bEmpty) return -1
+          if (aEmpty && bEmpty) return 0
+          
+          // Використовуємо localeCompare з правильною локаллю для сортування а-я та a-z
+          return ascending
+            ? a.localeCompare(b, detectedLocale, { 
+                sensitivity: 'base',
+                numeric: true,
+                caseFirst: 'false'
+              })
+            : b.localeCompare(a, detectedLocale, { 
+                sensitivity: 'base',
+                numeric: true,
+                caseFirst: 'false'
+              })
+        })
 
-        linesToSort.sort((a: string, b: string) =>
-          ascending
-            ? a.localeCompare(b, locale || 'uk-UA', { sensitivity: 'base' })
-            : b.localeCompare(a, locale || 'uk-UA', { sensitivity: 'base' }),
-        )
-
-        result = linesToSort.join('\n')
+        result = sortedLines.join('\n')
         processedCount = sortText.split('\n').length
         break
       }

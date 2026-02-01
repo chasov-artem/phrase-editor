@@ -96,35 +96,39 @@ export const Metrics: React.FC = () => {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-semibold text-gray-800 dark:text-white">
           Text metrics
         </h3>
 
         {isProcessing && (
-          <div className="flex items-center space-x-2 text-sm text-blue-600 dark:text-blue-400">
-            <div className="w-3 h-3 border-2 border-blue-600 dark:border-blue-400 border-t-transparent rounded-full animate-spin" />
+          <div className="flex items-center space-x-1.5 text-xs text-blue-600 dark:text-blue-400">
+            <div className="w-2.5 h-2.5 border-2 border-blue-600 dark:border-blue-400 border-t-transparent rounded-full animate-spin" />
             <span>Processing...</span>
           </div>
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 mb-6">
+      <div className="grid grid-cols-2 gap-2 mb-4">
         {metricCards.map((card) => (
           <div
             key={card.label}
-            className={`${card.bgColor} p-4 rounded-lg border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition`}
+            className={`${card.bgColor} p-2.5 rounded border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition overflow-hidden`}
           >
-            <div className="flex items-center space-x-3">
-              <div className={`p-2 rounded-lg ${card.bgColor}`}>
-                <div className={card.color}>{card.icon}</div>
+            <div className="flex items-center space-x-2 min-w-0">
+              <div className={`p-1.5 rounded flex-shrink-0 ${card.bgColor}`}>
+                <div className={`${card.color} flex items-center`}>
+                  {React.cloneElement(card.icon as React.ReactElement, { className: 'w-3.5 h-3.5' })}
+                </div>
               </div>
-              <div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                   {card.label}
                 </p>
-                <p className={`text-lg font-bold ${card.color}`}>{card.value}</p>
+                <p className={`text-sm font-bold ${card.color} truncate`} title={String(card.value)}>
+                  {card.value}
+                </p>
               </div>
             </div>
           </div>
@@ -132,38 +136,38 @@ export const Metrics: React.FC = () => {
       </div>
 
       {operationMetrics && (
-        <div className="space-y-3 border-t border-gray-200 dark:border-gray-700 pt-6 mt-4">
-          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        <div className="space-y-2 border-t border-gray-200 dark:border-gray-700 pt-3 mt-3">
+          <h4 className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
             Last operation
           </h4>
 
-          <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-            <span className="flex items-center space-x-2">
-              <AlertCircle className="w-4 h-4 text-gray-400" />
-              <span>Operation type:</span>
+          <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400 gap-2">
+            <span className="flex items-center space-x-1.5 flex-shrink-0">
+              <AlertCircle className="w-3 h-3 text-gray-400" />
+              <span>Type:</span>
             </span>
-            <span className="font-medium text-gray-900 dark:text-white">
+            <span className="font-medium text-gray-900 dark:text-white text-right truncate ml-2" title={getOperationName(operationMetrics.operation)}>
               {getOperationName(operationMetrics.operation)}
             </span>
           </div>
 
-          <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-            <span>Lines processed:</span>
-            <span className="font-mono text-sm">
+          <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400 gap-2">
+            <span className="flex-shrink-0">Processed:</span>
+            <span className="font-mono text-xs text-right">
               {formatNumber(operationMetrics.linesProcessed)}
             </span>
           </div>
 
-          <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-            <span>Result lines:</span>
-            <span className="font-mono text-sm">
+          <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400 gap-2">
+            <span className="flex-shrink-0">Result:</span>
+            <span className="font-mono text-xs text-right">
               {formatNumber(operationMetrics.linesChanged)}
             </span>
           </div>
 
-          <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-            <span>Execution time:</span>
-            <span className="font-mono text-sm">
+          <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400 gap-2">
+            <span className="flex-shrink-0">Time:</span>
+            <span className="font-mono text-xs text-right truncate" title={formatExecutionTime(operationMetrics.executionTime)}>
               {formatExecutionTime(operationMetrics.executionTime)}
             </span>
           </div>
@@ -171,7 +175,7 @@ export const Metrics: React.FC = () => {
       )}
 
       {textMetrics.totalLines === 0 && (
-        <div className="mt-6 rounded-lg bg-gray-50 dark:bg-gray-900/50 p-4 text-center text-sm text-gray-600 dark:text-gray-400">
+        <div className="mt-4 rounded bg-gray-50 dark:bg-gray-900/50 p-3 text-center text-xs text-gray-600 dark:text-gray-400">
           Paste or type phrases to analyze
         </div>
       )}

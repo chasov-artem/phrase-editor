@@ -46,12 +46,12 @@ export const OperationGroup: React.FC<OperationGroupProps> = ({
   }
 
   return (
-    <div className={`rounded-xl border-2 ${getGroupColor(title)} p-5`}>
-      <h3 className={`text-lg font-semibold mb-4 ${getTitleColor(title)}`}>
+    <div className={`rounded border ${getGroupColor(title)} p-2`}>
+      <h3 className={`text-xs font-semibold mb-1.5 ${getTitleColor(title)}`}>
         {title}
       </h3>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-1.5">
         {operations.map((operation) => (
           <OperationButton
             key={operation.id}
