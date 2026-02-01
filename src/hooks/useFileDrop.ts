@@ -1,4 +1,5 @@
-import { useState, useCallback, DragEvent } from 'react'
+import { useState, useCallback } from 'react'
+import type { DragEvent } from 'react'
 import { MAX_FILE_SIZE, ALLOWED_FILE_TYPES } from '../utils/constants'
 
 interface UseFileDropOptions {

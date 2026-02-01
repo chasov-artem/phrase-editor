@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { CheckCircle, XCircle, X, Info, AlertTriangle } from 'lucide-react'
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning'
@@ -23,6 +23,7 @@ export const Toast: React.FC<ToastProps> = ({
       }, duration)
       return () => clearTimeout(timer)
     }
+    return undefined
   }, [duration, onClose])
 
   const getIcon = () => {

@@ -87,8 +87,14 @@ export const Metrics: React.FC = () => {
       remove_after_dash: 'Remove text after "-"',
       sort_asc: 'Sort A → Z',
       sort_desc: 'Sort Z → A',
+      sort_asc_cyrillic: 'Sort A → Z (Cyrillic)',
+      sort_desc_cyrillic: 'Sort Z → A (Cyrillic)',
       remove_duplicates: 'Remove duplicates',
       remove_empty_lines: 'Remove empty lines',
+      number_lines: 'Number lines',
+      number_lines_padded: 'Number lines (padded)',
+      join_lines: 'Join lines',
+      split_lines: 'Split lines',
       search_replace: 'Search & replace',
     }
 
@@ -119,7 +125,7 @@ export const Metrics: React.FC = () => {
             <div className="flex items-center space-x-2 min-w-0">
               <div className={`p-1.5 rounded flex-shrink-0 ${card.bgColor}`}>
                 <div className={`${card.color} flex items-center`}>
-                  {React.cloneElement(card.icon as React.ReactElement, { className: 'w-3.5 h-3.5' })}
+                  {React.cloneElement(card.icon as React.ReactElement<any>, { className: 'w-3.5 h-3.5' })}
                 </div>
               </div>
               <div className="min-w-0 flex-1">

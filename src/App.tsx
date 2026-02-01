@@ -11,19 +11,6 @@ import { SettingsPanel } from '@components/SettingsPanel'
 import { KeyboardShortcuts } from '@components/KeyboardShortcuts'
 
 export default function App() {
-  const {
-    history,
-    historyIndex,
-    undo,
-    redo,
-    canUndo,
-    canRedo,
-    isProcessing,
-  } = useStore()
-
-  const undoSteps = historyIndex
-  const redoSteps = history.length - historyIndex - 1
-
   return (
     <ErrorBoundary>
       <ToastProvider>
