@@ -1,12 +1,11 @@
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import vercel from 'vite-plugin-vercel/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
   base: '/',
-  plugins: [react(), vercel()],
+  plugins: [react()],
   resolve: {
     alias: {
       '@components': resolve(__dirname, 'src/components'),
